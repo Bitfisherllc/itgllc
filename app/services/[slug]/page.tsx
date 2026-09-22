@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button } from "@/components/Button";
 import { PageHero } from "@/components/PageHero";
+import { iconFor, serviceIcons } from "@/lib/icons";
 import { getService, services } from "@/lib/services";
 
 export function generateStaticParams() {
@@ -35,7 +36,12 @@ export default async function ServicePage({
 
   return (
     <>
-      <PageHero eyebrow="Services" title={service.title} lede={service.summary} />
+      <PageHero
+        eyebrow="Services"
+        title={service.title}
+        lede={service.summary}
+        icon={iconFor(serviceIcons, service.slug)}
+      />
       <article className="mx-auto max-w-3xl px-6 py-16 md:px-8 md:py-24">
         <Breadcrumbs
           items={[

@@ -1,22 +1,21 @@
+import { config } from "@fortawesome/fontawesome-svg-core";
 import type { Metadata } from "next";
-import { Manrope, Newsreader } from "next/font/google";
+import { Source_Sans_3 } from "next/font/google";
 import { Footer } from "@/components/Footer";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+
+config.autoAddCss = false;
 import { Header } from "@/components/Header";
 import { JsonLd, organizationJsonLd } from "@/components/JsonLd";
+import { QualiaQuote } from "@/components/QualiaQuote";
 import { site } from "@/lib/site";
 import "./globals.css";
 
-const sans = Manrope({
+const sans = Source_Sans_3({
   subsets: ["latin"],
-  variable: "--font-manrope",
+  weight: ["400", "600", "700"],
+  variable: "--font-source",
   display: "swap",
-});
-
-const serif = Newsreader({
-  subsets: ["latin"],
-  variable: "--font-newsreader",
-  display: "swap",
-  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -42,9 +41,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${sans.variable} ${serif.variable} h-full antialiased`}
+      className={`${sans.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <QualiaQuote token={site.qualiaQuoteToken} />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:bg-paper focus:px-4 focus:py-3"

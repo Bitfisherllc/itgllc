@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { Icon } from "@/components/Icon";
 import { PageHero } from "@/components/PageHero";
+import { iconFor, pageIcons, resourceIcons } from "@/lib/icons";
 import { resources } from "@/lib/resources";
 
 export const metadata: Metadata = {
@@ -18,6 +20,7 @@ export default function ResourcesPage() {
         eyebrow="Resources"
         title="Clear answers before the file gets complicated."
         lede="Practical notes on how ITG opens and completes a transaction. Educational pages are marked when they are general information rather than advice."
+        icon={pageIcons.resources}
       />
       <div className="mx-auto max-w-6xl px-6 py-16 md:px-8 md:py-24">
         <Breadcrumbs
@@ -33,7 +36,8 @@ export default function ResourcesPage() {
               href={`/resources/${resource.slug}`}
               className="bg-paper p-8 transition-colors hover:bg-white"
             >
-              <h2 className="font-serif text-3xl">{resource.title}</h2>
+              <Icon icon={iconFor(resourceIcons, resource.slug)} className="text-xl text-brass" />
+              <h2 className="mt-4 font-serif text-3xl">{resource.title}</h2>
               <p className="mt-3 leading-relaxed text-ink-soft">{resource.summary}</p>
             </Link>
           ))}

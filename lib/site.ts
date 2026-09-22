@@ -44,6 +44,7 @@ export const site = {
     country: "US",
   },
   qualiaQuoteToken: "65N3CmvbFDJRPCpBF",
+  qualiaConnectUrl: "https://connect.qualia.io/signin",
 } as const;
 
 export const departments = {
@@ -97,9 +98,8 @@ export const coverageStates = [
 ] as const;
 
 export const nav = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
   { href: "/services", label: "Services" },
+  { href: "/about", label: "About" },
   { href: "/resources", label: "Resources" },
   { href: "/contact", label: "Contact" },
 ] as const;

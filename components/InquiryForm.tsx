@@ -173,7 +173,7 @@ export function InquiryForm({ intent }: { intent: InquiryIntent }) {
       <button
         type="submit"
         disabled={sending}
-        className="inline-flex min-h-12 items-center justify-center bg-ink px-6 text-sm font-semibold text-paper hover:bg-ink-soft disabled:opacity-60 sm:justify-self-start"
+        className="inline-flex min-h-12 items-center justify-center bg-ink px-6 text-sm font-semibold text-paper hover:bg-brass-deep disabled:opacity-60 sm:justify-self-start"
       >
         {sending ? "Sending" : intent === "order" ? "Send order request" : "Send message"}
       </button>

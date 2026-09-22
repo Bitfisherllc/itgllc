@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button } from "@/components/Button";
+import { Icon } from "@/components/Icon";
 import { PageHero } from "@/components/PageHero";
+import { pageIcons, teamIcons } from "@/lib/icons";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -34,6 +36,7 @@ export default function AboutPage() {
         eyebrow="About"
         title="A title office organized around the closing."
         lede="Integrity Title Group provides title and settlement services with a client-first standard: open the order properly, work it carefully, and carry it through recording."
+        icon={pageIcons.about}
       />
       <article className="mx-auto max-w-6xl px-6 py-16 md:px-8 md:py-24">
         <Breadcrumbs
@@ -68,9 +71,10 @@ export default function AboutPage() {
         <div className="mt-20">
           <h2 className="display text-4xl md:text-5xl">Three desks. One file.</h2>
           <div className="mt-10 grid gap-8 md:grid-cols-3">
-            {teams.map((team) => (
+            {teams.map((team, index) => (
               <article key={team.title} className="border-t border-brass pt-5">
-                <h3 className="font-serif text-2xl">{team.title}</h3>
+                <Icon icon={teamIcons[index] ?? teamIcons[0]} className="text-xl text-brass" />
+                <h3 className="mt-4 font-serif text-2xl">{team.title}</h3>
                 <p className="mt-3 leading-relaxed text-ink-soft">{team.text}</p>
               </article>
             ))}

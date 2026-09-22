@@ -4,6 +4,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Disclaimer } from "@/components/Disclaimer";
 import { FaqList } from "@/components/FaqList";
 import { PageHero } from "@/components/PageHero";
+import { iconFor, resourceIcons } from "@/lib/icons";
 import { getResource, resources } from "@/lib/resources";
 
 export function generateStaticParams() {
@@ -36,7 +37,12 @@ export default async function ResourcePage({
 
   return (
     <>
-      <PageHero eyebrow="Resources" title={resource.title} lede={resource.summary} />
+      <PageHero
+        eyebrow="Resources"
+        title={resource.title}
+        lede={resource.summary}
+        icon={iconFor(resourceIcons, resource.slug)}
+      />
       <article className="mx-auto max-w-3xl px-6 py-16 md:px-8 md:py-24">
         <Breadcrumbs
           items={[

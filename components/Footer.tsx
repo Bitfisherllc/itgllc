@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { Icon } from "@/components/Icon";
 import { Logo } from "@/components/Logo";
+import { QuoteLink } from "@/components/QuoteLink";
 import { resources } from "@/lib/resources";
 import { services } from "@/lib/services";
+import { faEnvelope, faFax, faLocationDot, faPhone } from "@/lib/icons";
 import { departments, formatAddress, site } from "@/lib/site";
 
 export function Footer() {
@@ -34,6 +37,19 @@ export function Footer() {
                 </Link>
               </li>
             ))}
+            <li>
+              <QuoteLink className="text-paper/80 hover:text-paper">Get a quote</QuoteLink>
+            </li>
+            <li>
+              <a
+                href={site.qualiaConnectUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-paper/80 hover:text-paper"
+              >
+                Closing platform
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -55,16 +71,24 @@ export function Footer() {
 
         <div className="md:col-span-3">
           <h2 className="eyebrow text-brass">Contact</h2>
-          <address className="mt-4 space-y-2 text-sm not-italic leading-relaxed text-paper/80">
-            <p>{formatAddress()}</p>
+          <address className="mt-4 space-y-3 text-sm not-italic leading-relaxed text-paper/80">
+            <p className="flex items-start gap-2">
+              <Icon icon={faLocationDot} className="mt-0.5 text-sm text-brass" />
+              <span>{formatAddress()}</span>
+            </p>
             <p>
-              <a href={site.phoneHref} className="hover:text-paper">
+              <a href={site.phoneHref} className="inline-flex items-center gap-2 hover:text-paper">
+                <Icon icon={faPhone} className="text-sm text-brass" />
                 {site.phone}
               </a>
             </p>
-            <p>Fax {site.fax}</p>
+            <p className="flex items-center gap-2">
+              <Icon icon={faFax} className="text-sm text-brass" />
+              Fax {site.fax}
+            </p>
             <p>
-              <a href={`mailto:${departments.general.email}`} className="hover:text-paper">
+              <a href={`mailto:${departments.general.email}`} className="inline-flex items-center gap-2 hover:text-paper">
+                <Icon icon={faEnvelope} className="text-sm text-brass" />
                 {departments.general.email}
               </a>
             </p>

@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button } from "@/components/Button";
+import { Icon } from "@/components/Icon";
 import { PageHero } from "@/components/PageHero";
+import { faLocationDot, pageIcons } from "@/lib/icons";
 import { coverageStates, site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -19,6 +21,7 @@ export default function CoveragePage() {
         eyebrow="Coverage"
         title="Where the work is offered."
         lede="Integrity Title Group is a Maryland office offering title and settlement services across a defined set of states. Outside that list, ask — partner help may be available, and it is not automatic."
+        icon={pageIcons.coverage}
       />
       <div className="mx-auto max-w-6xl px-6 py-16 md:px-8 md:py-24">
         <Breadcrumbs
@@ -44,7 +47,8 @@ export default function CoveragePage() {
             <h2 className="font-serif text-3xl">States</h2>
             <ul className="mt-6 grid grid-cols-2 gap-3">
               {coverageStates.map((state) => (
-                <li key={state} className="border-b border-line py-3">
+                <li key={state} className="flex items-center gap-2 border-b border-line py-3">
+                  <Icon icon={faLocationDot} className="text-xs text-brass" />
                   {state}
                 </li>
               ))}

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { Icon } from "@/components/Icon";
 import type { HomeAudience } from "@/lib/home-content";
+import { audienceIcons, iconFor } from "@/lib/icons";
 
 export function AudienceTabs({ audiences }: { audiences: HomeAudience[] }) {
   const [active, setActive] = useState(audiences[0]?.id ?? "buyers");
@@ -25,7 +27,10 @@ export function AudienceTabs({ audiences }: { audiences: HomeAudience[] }) {
                 selected ? "text-ink" : "text-muted hover:text-ink"
               }`}
             >
-              {item.label}
+              <span className="flex items-center gap-3">
+                <Icon icon={iconFor(audienceIcons, item.id)} className="text-base text-brass" />
+                {item.label}
+              </span>
               <span aria-hidden="true" className={selected ? "text-brass" : "opacity-0"}>
                 —
               </span>
