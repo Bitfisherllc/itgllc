@@ -60,7 +60,7 @@ export default function OrderPage() {
         <div className="lg:col-span-7">
           <h2 className="font-serif text-3xl">Order request</h2>
           <p className="mt-3 leading-relaxed text-ink-soft">
-            This prepares an email to {departments.orders.email}. Attach the sale agreement in your email app before you send a purchase order.
+            This sends an order request to {departments.orders.email}. A purchase still needs the sale agreement emailed separately. This form cannot take attachments.
           </p>
           <div className="mt-8">
             <InquiryForm intent="order" />

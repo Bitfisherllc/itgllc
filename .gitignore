@@ -30,6 +30,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# inquiry inbox when MySQL is not configured
+/data/
+
 # env files — keep secrets off GitHub; .env.example documents names only
 .env
 .env.*

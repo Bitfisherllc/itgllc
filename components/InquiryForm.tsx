@@ -9,13 +9,13 @@ const fieldClass =
 
 export function InquiryForm({ intent }: { intent: InquiryIntent }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [ready, setReady] = useState<{ to: string; mailto: string; body: string } | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [ready, setReady] = useState<{ to: string; department: string } | null>(null);
+  const [sending, setSending] = useState(false);
 
-  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const result = prepareInquiry({
+    const payload = {
       intent,
       name: String(form.get("name") ?? ""),
       email: String(form.get("email") ?? ""),
@@ -28,7 +28,8 @@ export function InquiryForm({ intent }: { intent: InquiryIntent }) {
       message: String(form.get("message") ?? ""),
       sensitiveAck: form.get("sensitiveAck") === "yes",
       honeypot: String(form.get("company_website") ?? ""),
-    });
+    };
+    const result = prepareInquiry(payload);
 
     if (result.status === "error") {
       setReady(null);
@@ -39,41 +40,49 @@ export function InquiryForm({ intent }: { intent: InquiryIntent }) {
       return;
     }
 
-    setErrors({});
-    setReady({ to: result.to, mailto: result.mailto, body: result.body });
-  }
-
-  async function copyBody() {
-    if (!ready) return;
+    setSending(true);
     try {
-      await navigator.clipboard.writeText(`To: ${ready.to}\n\n${ready.body}`);
-      setCopied(true);
+      const response = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const body = (await response.json()) as {
+        ok?: boolean;
+        department?: string;
+        to?: string;
+        errors?: Record<string, string>;
+      };
+      if (!response.ok || !body.ok) {
+        setErrors(body.errors ?? { form: "The message could not be sent. Call the office instead." });
+        return;
+      }
+      setErrors({});
+      setReady({ to: body.to || result.to, department: body.department || result.department });
     } catch {
-      setCopied(false);
+      setErrors({ form: "The message could not be sent. Call the office instead." });
+    } finally {
+      setSending(false);
     }
   }
 
   if (ready) {
     return (
       <div role="status" className="border border-line bg-white p-8">
-        <p className="eyebrow text-brass">Ready to send</p>
-        <h2 className="display mt-4 text-4xl">Your inquiry is prepared.</h2>
+        <p className="eyebrow text-brass">Received</p>
+        <h2 className="display mt-4 text-4xl">ITG has your message.</h2>
         <p className="mt-4 leading-relaxed text-ink-soft">
-          It is addressed to <a className="underline" href={`mailto:${ready.to}`}>{ready.to}</a>.
-          Open your email app and send the message. This website does not store the form on a server.
-        </p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <a href={ready.mailto} className="inline-flex min-h-12 items-center justify-center bg-ink px-6 text-sm font-semibold text-paper">
-            Open email
+          It is with {ready.department.toLowerCase()} at{" "}
+          <a className="underline" href={`mailto:${ready.to}`}>
+            {ready.to}
           </a>
-          <button
-            type="button"
-            onClick={copyBody}
-            className="inline-flex min-h-12 items-center justify-center border border-ink px-6 text-sm font-semibold"
-          >
-            {copied ? "Copied" : "Copy message"}
-          </button>
-        </div>
+          . Someone at that desk can follow up using the phone and email you entered.
+        </p>
+        {intent === "order" ? (
+          <p className="mt-4 leading-relaxed text-ink-soft">
+            This form cannot take attachments. Email the sale agreement to {ready.to} so a purchase file can be opened.
+          </p>
+        ) : null}
       </div>
     );
   }
@@ -152,7 +161,6 @@ export function InquiryForm({ intent }: { intent: InquiryIntent }) {
           />
           <span>
             I will not include Social Security numbers, bank account numbers, or wire instructions.
-            I understand this form only prepares an email to ITG.
           </span>
         </label>
         {errors.sensitiveAck ? (
@@ -164,9 +172,10 @@ export function InquiryForm({ intent }: { intent: InquiryIntent }) {
 
       <button
         type="submit"
-        className="inline-flex min-h-12 items-center justify-center bg-ink px-6 text-sm font-semibold text-paper hover:bg-ink-soft sm:justify-self-start"
+        disabled={sending}
+        className="inline-flex min-h-12 items-center justify-center bg-ink px-6 text-sm font-semibold text-paper hover:bg-ink-soft disabled:opacity-60 sm:justify-self-start"
       >
-        {intent === "order" ? "Prepare order email" : "Prepare message"}
+        {sending ? "Sending" : intent === "order" ? "Send order request" : "Send message"}
       </button>
     </form>
   );

@@ -1,6 +1,10 @@
 const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
+const { handleApi } = require("./server/api");
+const { loadEnvFile } = require("./server/env");
+
+loadEnvFile();
 
 const root = path.join(__dirname, "out");
 const port = Number.parseInt(process.env.PORT || "3000", 10);
@@ -68,6 +72,12 @@ function send(res, status, filePath) {
 }
 
 const server = http.createServer((req, res) => {
+  const pathname = (req.url || "/").split("?")[0];
+  if (pathname === "/api" || pathname.startsWith("/api/")) {
+    handleApi(req, res);
+    return;
+  }
+
   const filePath = resolveFile(req.url || "/");
   if (filePath) {
     send(res, 200, filePath);

@@ -27,7 +27,7 @@ export default function PrivacyPage() {
         />
         <div className="space-y-5 leading-relaxed text-ink-soft">
           <p>
-            Contact and order forms on this website check what you typed, then prepare an email to the appropriate {site.legalName} address. The form does not save a copy of the message on the website server. Your email application sends it when you choose to send.
+            Contact and order forms send the message you typed to {site.legalName}. Staff can read it in a private admin inbox and at the department address the form selects. Do not treat the form as a secure file for a closing.
           </p>
           <p>
             Do not include Social Security numbers, bank account numbers, wire instructions, or similar financial details in a website form. Confirm payment instructions by calling {site.phone}.

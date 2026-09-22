@@ -30,7 +30,7 @@ export default function TermsPage() {
             Content on this website is published by {site.legalName} for general information. Resource pages that discuss title insurance or the closing process are not legal advice, not a title policy, and not a quote. Coverage, exceptions, and fees depend on the specific transaction.
           </p>
           <p>
-            An inquiry prepared by a form is not an opened title order until the office receives it and accepts the file. A purchase request should include the sale agreement. Sending a message does not create an attorney-client relationship or a commitment to insure title.
+            An inquiry sent through a form is not an opened title order until the office accepts the file. A purchase request should include the sale agreement, sent by email because the form cannot take attachments. Sending a message does not create an attorney-client relationship or a commitment to insure title.
           </p>
           <p>
             Service-area statements describe where title and settlement services are offered. Properties outside those states should be confirmed with the office. Partner assistance, where it exists, is not a promise of coverage.

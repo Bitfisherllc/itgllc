@@ -52,7 +52,7 @@ export default function ContactPage() {
         <div className="lg:col-span-7">
           <h2 className="font-serif text-3xl">Send a message</h2>
           <p className="mt-3 leading-relaxed text-ink-soft">
-            The form prepares an email to the desk that matches your question. It does not store a copy on this website.
+            The form sends your message to ITG and routes it to the desk that matches your question.
           </p>
           <div className="mt-8">
             <InquiryForm intent="contact" />
