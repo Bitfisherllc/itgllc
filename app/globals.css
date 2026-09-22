@@ -1,26 +1,99 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ink: #14202b;
+  --color-ink-soft: #243244;
+  --color-paper: #f3f0ea;
+  --color-paper-deep: #e6e0d4;
+  --color-brass: #8a7048;
+  --color-brass-deep: #6d5736;
+  --color-muted: #5c6670;
+  --color-line: rgba(20, 32, 43, 0.14);
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: #d9c7a4;
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brass-deep);
+  outline-offset: 3px;
+}
+
+.display {
+  font-family: var(--font-serif);
+  font-weight: 450;
+  letter-spacing: -0.03em;
+  line-height: 0.96;
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* Brass (#8a7048) is for lines and large type on paper.
+   Small brass type on the ink background needs a lighter tone. */
+.bg-ink .text-brass {
+  color: #e4d3b4;
+}
+
+.rule {
+  background: linear-gradient(90deg, var(--color-brass), transparent 80%);
+  height: 1px;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-drift {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.05);
+  }
+}
+
+.rise {
+  animation: rise 0.85s ease both;
+}
+
+.hero-photo {
+  animation: hero-drift 32s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .rise,
+  .hero-photo {
+    animation: none;
+  }
 }
