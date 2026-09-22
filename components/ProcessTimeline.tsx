@@ -1,38 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import type { HomeStep } from "@/lib/home-content";
 
-const steps = [
-  {
-    n: "01",
-    title: "Order opened",
-    text: "Client care opens a purchase or refinance order. On a purchase, the sale agreement should come with the request so processing is not waiting on basic information.",
-  },
-  {
-    n: "02",
-    title: "Title processing",
-    text: "A processor is assigned and works the file, including complicated matters. Questions about the open order go to the processing desk.",
-  },
-  {
-    n: "03",
-    title: "Review and preparation",
-    text: "The file is prepared for settlement. If you are still comparing fees, a pre-closing disclosure can be requested before the order moves ahead.",
-  },
-  {
-    n: "04",
-    title: "Closing",
-    text: "The parties sign and the transaction is settled. The office remains available for questions through that signing.",
-  },
-  {
-    n: "05",
-    title: "Recording and completion",
-    text: "Post-closing handles funding, recording, and a document audit, with authorization and layered verification.",
-  },
-] as const;
-
-export function ProcessTimeline() {
+export function ProcessTimeline({ steps }: { steps: HomeStep[] }) {
   const [active, setActive] = useState(0);
-  const current = steps[active];
+  const current = steps[active] ?? steps[0];
+  if (!current) return null;
 
   return (
     <div>

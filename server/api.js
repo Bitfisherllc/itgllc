@@ -1,5 +1,6 @@
 const { prepareInquiry } = require("../lib/inquiry-core.cjs");
 const auth = require("./auth");
+const home = require("./home-store");
 const store = require("./inquiry-store");
 
 const attempts = new Map();
@@ -20,7 +21,7 @@ function readBody(req) {
     let size = 0;
     req.on("data", (chunk) => {
       size += chunk.length;
-      if (size > 20_000) {
+      if (size > 80_000) {
         reject(Object.assign(new Error("too large"), { status: 413 }));
         req.destroy();
         return;
@@ -124,6 +125,11 @@ async function handleApi(req, res) {
       return;
     }
 
+    if (req.method === "GET" && pathname === "/api/home") {
+      sendJson(res, 200, { ok: true, content: await home.readHome() });
+      return;
+    }
+
     if (req.method === "GET" && pathname === "/api/admin/session") {
       sendJson(res, 200, { ok: true, signedIn: auth.isSignedIn(req) });
       return;
@@ -136,6 +142,13 @@ async function handleApi(req, res) {
 
     if (req.method === "GET" && pathname === "/api/admin/inquiries") {
       sendJson(res, 200, { ok: true, inquiries: await store.listInquiries() });
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/admin/home") {
+      const body = await readBody(req);
+      const content = await home.writeHome(body.content || body);
+      sendJson(res, 200, { ok: true, content });
       return;
     }
 

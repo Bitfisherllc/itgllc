@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { HomeEditor } from "@/components/HomeEditor";
 
 type Inquiry = {
   id: string;
@@ -28,6 +29,7 @@ export function AdminPanel() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [listError, setListError] = useState("");
   const [busyId, setBusyId] = useState("");
+  const [view, setView] = useState<"home" | "inbox">("home");
 
   async function loadInquiries() {
     const response = await fetch("/api/admin/inquiries");
@@ -106,7 +108,7 @@ export function AdminPanel() {
         <p className="eyebrow text-brass">Private</p>
         <h1 className="display mt-4 text-5xl">Admin</h1>
         <p className="mt-4 leading-relaxed text-ink-soft">
-          Website inquiries are visible here. This page is not linked from the public site.
+          Homepage text and website inquiries are managed here. This page is not linked from the public site.
         </p>
         {loginError ? (
           <p role="alert" className="mt-6 border border-brass bg-paper-deep px-4 py-3 text-sm">
@@ -142,20 +144,50 @@ export function AdminPanel() {
       <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="eyebrow text-brass">Private</p>
-          <h1 className="display mt-4 text-5xl">Inquiries</h1>
+          <h1 className="display mt-4 text-5xl">{view === "home" ? "Homepage" : "Inquiries"}</h1>
           <p className="mt-4 text-ink-soft">
-            {fresh === 0 ? "No new messages." : `${fresh} new ${fresh === 1 ? "message" : "messages"}.`}
+            {view === "home"
+              ? "Changes appear on the public homepage after you save."
+              : fresh === 0
+                ? "No new messages."
+                : `${fresh} new ${fresh === 1 ? "message" : "messages"}.`}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={onLogout}
-          className="inline-flex min-h-12 items-center justify-center border border-ink px-6 text-sm font-semibold"
-        >
-          Sign out
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={() => setView("home")}
+            className={`inline-flex min-h-12 items-center justify-center border px-6 text-sm font-semibold ${
+              view === "home" ? "border-ink bg-ink text-paper" : "border-ink"
+            }`}
+          >
+            Homepage
+          </button>
+          <button
+            type="button"
+            onClick={() => setView("inbox")}
+            className={`inline-flex min-h-12 items-center justify-center border px-6 text-sm font-semibold ${
+              view === "inbox" ? "border-ink bg-ink text-paper" : "border-ink"
+            }`}
+          >
+            Inquiries
+          </button>
+          <button
+            type="button"
+            onClick={onLogout}
+            className="inline-flex min-h-12 items-center justify-center border border-ink px-6 text-sm font-semibold"
+          >
+            Sign out
+          </button>
+        </div>
       </div>
 
+      {view === "home" ? (
+        <div className="mt-10">
+          <HomeEditor />
+        </div>
+      ) : (
+        <>
       {listError ? (
         <p role="alert" className="mt-8 border border-brass bg-paper-deep px-4 py-3 text-sm">
           {listError}
@@ -222,6 +254,8 @@ export function AdminPanel() {
             </li>
           ))}
         </ul>
+      )}
+        </>
       )}
     </div>
   );

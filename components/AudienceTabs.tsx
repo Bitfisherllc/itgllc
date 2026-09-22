@@ -1,37 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import type { HomeAudience } from "@/lib/home-content";
 
-const audiences = [
-  {
-    id: "buyers",
-    label: "Home buyers",
-    text: "A purchase file opens with the sale agreement. ITG’s client-care and processing teams use that contract to start the title order, then stay with the file through settlement.",
-  },
-  {
-    id: "sellers",
-    label: "Home sellers",
-    text: "Sellers are part of the same purchase settlement. The sale agreement starts the order, and post-closing carries funding, recording, and the document audit after signing.",
-  },
-  {
-    id: "refinance",
-    label: "Homeowners refinancing",
-    text: "Refinance orders are opened on their own. If you are still comparing fees, request a pre-closing disclosure before the file is treated as an opened order.",
-  },
-  {
-    id: "agents",
-    label: "Real estate agents",
-    text: "Agents send purchase and refinance orders, with the sale agreement on a purchase. Qualia is the secure portal for documents once the file is underway.",
-  },
-  {
-    id: "lenders",
-    label: "Lenders",
-    text: "Lenders share that same portal with agents and clients. Processing handles the open file, including complicated matters, and post-closing takes funding and recording.",
-  },
-] as const;
-
-export function AudienceTabs() {
-  const [active, setActive] = useState<(typeof audiences)[number]["id"]>("buyers");
+export function AudienceTabs({ audiences }: { audiences: HomeAudience[] }) {
+  const [active, setActive] = useState(audiences[0]?.id ?? "buyers");
   const current = audiences.find((item) => item.id === active) ?? audiences[0];
 
   return (
