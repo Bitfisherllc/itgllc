@@ -26,9 +26,11 @@ export function ProcessTimeline({ steps }: { steps: HomeStep[] }) {
                 className="border-t-2 pt-5 text-left"
                 style={{ borderColor: selected ? "#32b44a" : "rgba(0,0,0,0.14)" }}
               >
-                <Icon icon={stepIcons[index] ?? stepIcons[0]} className="text-lg text-brass" />
-                <span className="mt-3 block text-xs tracking-[0.18em] text-brass">{step.n}</span>
-                <span className="mt-3 block font-serif text-xl leading-tight">{step.title}</span>
+                <span className="text-xs tracking-[0.18em] text-brass">{step.n}</span>
+                <span className="mt-3 flex items-start gap-2 font-serif text-xl leading-tight">
+                  <Icon icon={stepIcons[index] ?? stepIcons[0]} className="mt-1 shrink-0 text-base text-brass" />
+                  {step.title}
+                </span>
               </button>
             );
           })}
@@ -42,9 +44,11 @@ export function ProcessTimeline({ steps }: { steps: HomeStep[] }) {
         {steps.map((step, index) => (
           <li key={step.n} className="relative">
             <span className="absolute -left-[1.7rem] top-1 h-3 w-3 border border-brass bg-paper" aria-hidden="true" />
-            <Icon icon={stepIcons[index] ?? stepIcons[0]} className="text-lg text-brass" />
-            <p className="mt-2 text-xs tracking-[0.18em] text-brass">{step.n}</p>
-            <h3 className="mt-2 font-serif text-2xl">{step.title}</h3>
+            <p className="text-xs tracking-[0.18em] text-brass">{step.n}</p>
+            <h3 className="mt-2 flex items-center gap-3 font-serif text-2xl">
+              <Icon icon={stepIcons[index] ?? stepIcons[0]} className="shrink-0 text-xl text-brass" />
+              {step.title}
+            </h3>
             <p className="mt-2 leading-relaxed text-ink-soft">{step.text}</p>
           </li>
         ))}

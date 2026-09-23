@@ -39,6 +39,9 @@ export const inquiryOptions = options as {
   helpOptions: readonly string[];
 };
 
-export function prepareInquiry(input: InquiryInput): InquiryResult {
-  return prepare(input) as InquiryResult;
+export function prepareInquiry(
+  input: InquiryInput,
+  routes?: { helpOptions?: readonly string[] },
+): InquiryResult {
+  return prepare(input, routes) as InquiryResult;
 }

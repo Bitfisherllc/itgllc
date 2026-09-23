@@ -1,4 +1,7 @@
-import { coverageStates, formatAddress, site } from "@/lib/site";
+"use client";
+
+import { usePages } from "@/components/usePages";
+import { coverageStates, site } from "@/lib/site";
 
 export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return (
@@ -9,24 +12,25 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
   );
 }
 
-export function organizationJsonLd() {
-  return {
+export function OrganizationJsonLd() {
+  const { office } = usePages();
+  const data = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     name: site.legalName,
     alternateName: site.name,
     description: site.description,
     url: site.url,
-    telephone: site.phone,
-    faxNumber: site.fax,
-    email: site.email,
+    telephone: office.phone,
+    faxNumber: office.fax,
+    email: office.emailGeneral,
     image: `${site.url}/images/baltimore-harbor.jpg`,
     address: {
       "@type": "PostalAddress",
-      streetAddress: site.address.street,
-      addressLocality: site.address.city,
-      addressRegion: site.address.region,
-      postalCode: site.address.postalCode,
+      streetAddress: office.street,
+      addressLocality: office.city,
+      addressRegion: office.region,
+      postalCode: office.postalCode,
       addressCountry: site.address.country,
     },
     areaServed: coverageStates.map((name) => ({
@@ -40,6 +44,7 @@ export function organizationJsonLd() {
       "Refinance closings",
     ],
   };
+  return <JsonLd data={data} />;
 }
 
 export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
@@ -55,6 +60,3 @@ export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
   };
 }
 
-export function localAddress() {
-  return formatAddress();
-}

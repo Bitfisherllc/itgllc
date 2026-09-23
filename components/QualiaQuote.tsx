@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const SCRIPT_ID = "qualia-quote-widget-loader";
@@ -37,7 +38,12 @@ function closeQuoteWindow() {
 }
 
 export function QualiaQuote({ token }: { token: string }) {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.toggleAttribute("data-admin", pathname === "/admin");
+  }, [pathname]);
 
   useEffect(() => {
     const host = window as Window & { __itgQualia?: boolean };

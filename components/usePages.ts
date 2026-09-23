@@ -1,0 +1,45 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { pageCopy, type PageCopy } from "@/lib/page-copy";
+import { presentPages } from "@/lib/office";
+
+let current: PageCopy = presentPages(pageCopy);
+const listeners = new Set<() => void>();
+let inflight: Promise<void> | null = null;
+
+function publish(next: PageCopy) {
+  current = presentPages(next);
+  listeners.forEach((listener) => listener());
+}
+
+export function refreshPages() {
+  if (inflight) return inflight;
+  inflight = fetch("/api/pages")
+    .then((response) => response.json())
+    .then((body: { pages?: PageCopy }) => {
+      if (body.pages) publish(body.pages);
+    })
+    .catch(() => undefined)
+    .finally(() => {
+      inflight = null;
+    });
+  return inflight;
+}
+
+export function usePages() {
+  const [pages, setPages] = useState(current);
+
+  useEffect(() => {
+    const onChange = () => setPages(current);
+    listeners.add(onChange);
+    refreshPages();
+    window.addEventListener("focus", refreshPages);
+    return () => {
+      listeners.delete(onChange);
+      window.removeEventListener("focus", refreshPages);
+    };
+  }, []);
+
+  return pages;
+}

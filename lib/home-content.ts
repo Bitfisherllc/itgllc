@@ -5,6 +5,10 @@ export type HomeText = {
   text: string;
 };
 
+export type HomePillar = HomeText & {
+  image: string;
+};
+
 export type HomeAudience = {
   id: string;
   label: string;
@@ -21,7 +25,11 @@ export type HomeContent = {
   heroEyebrow: string;
   heroHeadline: string;
   heroLede: string;
-  pillars: HomeText[];
+  heroImage: string;
+  heroSlides: string[];
+  heroLogo: string;
+  heroLogoSize: number;
+  pillars: HomePillar[];
   servicesEyebrow: string;
   servicesHeading: string;
   servicesLede: string;
@@ -32,6 +40,7 @@ export type HomeContent = {
   processHeading: string;
   steps: HomeStep[];
   aboutEyebrow: string;
+  aboutImage: string;
   aboutHeading: string;
   aboutLead: string;
   aboutBody: string;

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 999.3 720" role="img" aria-label="ITG door opening animation">
+  <rect x="-2.15" y="-2.69" width="1003.91" height="724.71" fill="#000"/>
+  <rect x="397.36" y="234.08" width="111.17" height="247.22" fill="#fff"/>
+
+  <!-- Door: closed -> open -->
+  <path fill="#32b44a" d="M395.38 234.08 L508.52 234.08 L508.52 481.30 L395.38 481.30 Z">
+    <animate attributeName="d"
+      dur="0.8s"
+      begin="0.15s"
+      fill="freeze"
+      calcMode="spline"
+      keyTimes="0;1"
+      keySplines="0.22 1 0.36 1"
+      values="M395.38 234.08 L508.52 234.08 L508.52 481.30 L395.38 481.30 Z;
+              M395.38 234.08 L461.80 213.70 L461.80 501.70 L395.38 481.30 Z"/>
+  </path>
+
+  <!-- Knob follows the door -->
+  <ellipse fill="#fff" cx="494.20" cy="349.70" rx="8.25" ry="8.25">
+    <animate attributeName="cx" from="494.20" to="447.00" dur="0.8s" begin="0.15s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.22 1 0.36 1"/>
+    <animate attributeName="cy" from="349.70" to="353.80" dur="0.8s" begin="0.15s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.22 1 0.36 1"/>
+    <animate attributeName="rx" from="8.25" to="7.90" dur="0.8s" begin="0.15s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.22 1 0.36 1"/>
+    <animate attributeName="ry" from="8.25" to="11.80" dur="0.8s" begin="0.15s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.22 1 0.36 1"/>
+  </ellipse>
+</svg>

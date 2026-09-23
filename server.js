@@ -22,6 +22,7 @@ const types = {
   ".jpeg": "image/jpeg",
   ".js": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
+  ".mp4": "video/mp4",
   ".png": "image/png",
   ".svg": "image/svg+xml",
   ".txt": "text/plain; charset=utf-8",
@@ -65,9 +66,19 @@ function resolveFile(urlPath) {
   return null;
 }
 
-function send(res, status, filePath) {
+function send(res, status, filePath, urlPath) {
   const type = types[path.extname(filePath).toLowerCase()] || "application/octet-stream";
-  res.writeHead(status, { "Content-Type": type });
+  const headers = { "Content-Type": type };
+  const fileUrl = urlPath ? urlPath.split("?")[0] : "";
+  if (
+    fileUrl.startsWith("/images/home/") ||
+    fileUrl.startsWith("/images/library/") ||
+    fileUrl.startsWith("/videos/") ||
+    fileUrl.startsWith("/logo/custom/")
+  ) {
+    headers["Cache-Control"] = "no-cache";
+  }
+  res.writeHead(status, headers);
   fs.createReadStream(filePath).pipe(res);
 }
 
@@ -80,7 +91,7 @@ const server = http.createServer((req, res) => {
 
   const filePath = resolveFile(req.url || "/");
   if (filePath) {
-    send(res, 200, filePath);
+    send(res, 200, filePath, pathname);
     return;
   }
 

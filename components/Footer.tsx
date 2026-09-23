@@ -1,21 +1,24 @@
+"use client";
+
 import Link from "next/link";
+import { FooterLogo } from "@/components/FooterLogo";
 import { Icon } from "@/components/Icon";
-import { Logo } from "@/components/Logo";
 import { QuoteLink } from "@/components/QuoteLink";
-import { resources } from "@/lib/resources";
-import { services } from "@/lib/services";
+import { usePages } from "@/components/usePages";
 import { faEnvelope, faFax, faLocationDot, faPhone } from "@/lib/icons";
-import { departments, formatAddress, site } from "@/lib/site";
+import { formatOfficeAddress, telHref } from "@/lib/office";
+import { site } from "@/lib/site";
 
 export function Footer() {
+  const { services, resources, other, office } = usePages();
+
   return (
     <footer className="border-t border-white/10 bg-ink text-paper">
       <div className="mx-auto grid max-w-6xl gap-12 px-6 py-16 md:px-8 md:grid-cols-12">
         <div className="md:col-span-4">
-          <Logo tone="paper" />
+          <FooterLogo src={other.footerLogo} />
           <p className="mt-6 max-w-xs text-sm leading-relaxed text-paper/75">
-            {site.legalName} provides title and settlement services for purchase
-            and refinance transactions.
+            {other.footer}
           </p>
         </div>
 
@@ -25,11 +28,12 @@ export function Footer() {
             {[
               ["Home", "/"],
               ["About", "/about"],
+              ["Our team", "/team"],
               ["Services", "/services"],
-              ["Where we work", "/coverage"],
+              ["Service Locations", "/coverage"],
               ["Resources", "/resources"],
+              ["Articles", "/articles"],
               ["Contact", "/contact"],
-              ["Start an order", "/order"],
             ].map(([label, href]) => (
               <li key={href}>
                 <Link href={href} className="text-paper/80 hover:text-paper">
@@ -47,7 +51,7 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className="text-paper/80 hover:text-paper"
               >
-                Closing platform
+                Login
               </a>
             </li>
           </ul>
@@ -56,7 +60,7 @@ export function Footer() {
         <div className="md:col-span-3">
           <h2 className="eyebrow text-brass">Services</h2>
           <ul className="mt-4 space-y-2 text-sm">
-            {services.slice(0, 6).map((service) => (
+            {services.items.slice(0, 6).map((service) => (
               <li key={service.slug}>
                 <Link
                   href={`/services/${service.slug}`}
@@ -74,28 +78,28 @@ export function Footer() {
           <address className="mt-4 space-y-3 text-sm not-italic leading-relaxed text-paper/80">
             <p className="flex items-start gap-2">
               <Icon icon={faLocationDot} className="mt-0.5 text-sm text-brass" />
-              <span>{formatAddress()}</span>
+              <span>{formatOfficeAddress(office)}</span>
             </p>
             <p>
-              <a href={site.phoneHref} className="inline-flex items-center gap-2 hover:text-paper">
+              <a href={telHref(office.phone)} className="inline-flex items-center gap-2 hover:text-paper">
                 <Icon icon={faPhone} className="text-sm text-brass" />
-                {site.phone}
+                {office.phone}
               </a>
             </p>
             <p className="flex items-center gap-2">
               <Icon icon={faFax} className="text-sm text-brass" />
-              Fax {site.fax}
+              Fax {office.fax}
             </p>
             <p>
-              <a href={`mailto:${departments.general.email}`} className="inline-flex items-center gap-2 hover:text-paper">
+              <a href={`mailto:${office.emailGeneral}`} className="inline-flex items-center gap-2 hover:text-paper">
                 <Icon icon={faEnvelope} className="text-sm text-brass" />
-                {departments.general.email}
+                {office.emailGeneral}
               </a>
             </p>
           </address>
           <h2 className="eyebrow mt-8 text-brass">Resources</h2>
           <ul className="mt-4 space-y-2 text-sm">
-            {resources.slice(0, 4).map((resource) => (
+            {resources.items.slice(0, 4).map((resource) => (
               <li key={resource.slug}>
                 <Link
                   href={`/resources/${resource.slug}`}
@@ -120,6 +124,9 @@ export function Footer() {
             </Link>
             <Link href="/terms" className="hover:text-paper">
               Terms
+            </Link>
+            <Link href="/admin" className="hover:text-paper">
+              Admin
             </Link>
           </p>
         </div>

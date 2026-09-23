@@ -1,7 +1,12 @@
 "use client";
 
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
+import { previewPath, useAdminNav } from "@/components/AdminNav";
 import { HomeEditor } from "@/components/HomeEditor";
+import { Icon } from "@/components/Icon";
+import { LibraryEditor } from "@/components/LibraryEditor";
+import { PagesEditor } from "@/components/PagesEditor";
 
 type Inquiry = {
   id: string;
@@ -23,13 +28,14 @@ const fieldClass =
   "mt-2 w-full border border-line bg-white px-3 py-3 text-base text-ink outline-none focus-visible:border-brass";
 
 export function AdminPanel() {
-  const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [listError, setListError] = useState("");
   const [busyId, setBusyId] = useState("");
-  const [view, setView] = useState<"home" | "inbox">("home");
+  const { target, preview, signedIn, setSignedIn } = useAdminNav();
+  const previewHref = previewPath(target);
 
   async function loadInquiries() {
     const response = await fetch("/api/admin/inquiries");
@@ -43,22 +49,12 @@ export function AdminPanel() {
   }
 
   useEffect(() => {
-    let cancelled = false;
-    fetch("/api/admin/session")
-      .then((response) => response.json())
-      .then((body: { signedIn?: boolean }) => {
-        if (cancelled) return;
-        const next = Boolean(body.signedIn);
-        setSignedIn(next);
-        if (next) return loadInquiries();
-      })
-      .catch(() => {
-        if (!cancelled) setSignedIn(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+    if (!signedIn) {
+      setInquiries([]);
+      return;
+    }
+    void loadInquiries();
+  }, [signedIn]);
 
   async function onLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -75,13 +71,6 @@ export function AdminPanel() {
     }
     setPassword("");
     setSignedIn(true);
-    await loadInquiries();
-  }
-
-  async function onLogout() {
-    await fetch("/api/admin/logout", { method: "POST" });
-    setSignedIn(false);
-    setInquiries([]);
   }
 
   async function setStatus(id: string, status: Inquiry["status"]) {
@@ -108,7 +97,7 @@ export function AdminPanel() {
         <p className="eyebrow text-brass">Private</p>
         <h1 className="display mt-4 text-5xl">Admin</h1>
         <p className="mt-4 leading-relaxed text-ink-soft">
-          Homepage text and website inquiries are managed here. This page is not linked from the public site.
+          Page text and website inquiries are managed here. This page is not linked from the public site.
         </p>
         {loginError ? (
           <p role="alert" className="mt-6 border border-brass bg-paper-deep px-4 py-3 text-sm">
@@ -118,15 +107,26 @@ export function AdminPanel() {
         <label htmlFor="password" className="mt-6 block text-sm font-semibold">
           Password
         </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          className={fieldClass}
-        />
+        <div className="relative mt-2">
+          <input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            className="w-full border border-line bg-white px-3 py-3 pr-12 text-base text-ink outline-none focus-visible:border-brass"
+          />
+          <button
+            type="button"
+            className="absolute inset-y-0 right-0 inline-flex w-12 items-center justify-center text-ink"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-pressed={showPassword}
+            onClick={() => setShowPassword((value) => !value)}
+          >
+            <Icon icon={showPassword ? faEyeSlash : faEye} className="text-base text-ink" />
+          </button>
+        </div>
         <button
           type="submit"
           className="mt-6 inline-flex min-h-12 items-center justify-center bg-ink px-6 text-sm font-semibold text-paper"
@@ -141,51 +141,41 @@ export function AdminPanel() {
 
   return (
     <div>
-      <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+      <div>
         <div>
           <p className="eyebrow text-brass">Private</p>
-          <h1 className="display mt-4 text-5xl">{view === "home" ? "Homepage" : "Inquiries"}</h1>
-          <p className="mt-4 text-ink-soft">
-            {view === "home"
+          <h1 className="display mt-4 text-5xl">{target.label}</h1>
+          <p className="mt-4 max-w-2xl text-ink-soft">
+            {target.kind === "home"
               ? "Changes appear on the public homepage after you save."
-              : fresh === 0
-                ? "No new messages."
-                : `${fresh} new ${fresh === 1 ? "message" : "messages"}.`}
+              : target.kind === "page"
+                ? "Edit this page, then save. The public page updates after you save."
+                : target.kind === "library"
+                  ? "Upload several photographs at once, or delete the ones you no longer need."
+                  : fresh === 0
+                    ? "No new messages."
+                    : `${fresh} new ${fresh === 1 ? "message" : "messages"}.`}
           </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={() => setView("home")}
-            className={`inline-flex min-h-12 items-center justify-center border px-6 text-sm font-semibold ${
-              view === "home" ? "border-ink bg-ink text-paper" : "border-ink"
-            }`}
-          >
-            Homepage
-          </button>
-          <button
-            type="button"
-            onClick={() => setView("inbox")}
-            className={`inline-flex min-h-12 items-center justify-center border px-6 text-sm font-semibold ${
-              view === "inbox" ? "border-ink bg-ink text-paper" : "border-ink"
-            }`}
-          >
-            Inquiries
-          </button>
-          <button
-            type="button"
-            onClick={onLogout}
-            className="inline-flex min-h-12 items-center justify-center border border-ink px-6 text-sm font-semibold"
-          >
-            Sign out
-          </button>
         </div>
       </div>
 
-      {view === "home" ? (
+      {preview && previewHref ? (
+        <iframe
+          title={`Preview of ${target.label}`}
+          src={previewHref}
+          className="fixed inset-x-0 bottom-0 top-16 z-40 h-[calc(100vh-4rem)] w-full bg-white"
+        />
+      ) : null}
+
+      <div hidden={preview} {...(preview ? { inert: true } : {})}>
+      {target.kind === "home" ? (
         <div className="mt-10">
           <HomeEditor />
         </div>
+      ) : target.kind === "page" ? (
+        <PagesEditor id={target.id} slug={target.slug} label={target.label} />
+      ) : target.kind === "library" ? (
+        <LibraryEditor />
       ) : (
         <>
       {listError ? (
@@ -257,6 +247,7 @@ export function AdminPanel() {
       )}
         </>
       )}
+      </div>
     </div>
   );
 }

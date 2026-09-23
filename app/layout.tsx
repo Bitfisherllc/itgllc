@@ -5,8 +5,9 @@ import { Footer } from "@/components/Footer";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 
 config.autoAddCss = false;
+import { AdminNavProvider } from "@/components/AdminNav";
 import { Header } from "@/components/Header";
-import { JsonLd, organizationJsonLd } from "@/components/JsonLd";
+import { OrganizationJsonLd } from "@/components/JsonLd";
 import { QualiaQuote } from "@/components/QualiaQuote";
 import { site } from "@/lib/site";
 import "./globals.css";
@@ -45,18 +46,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col">
         <QualiaQuote token={site.qualiaQuoteToken} />
+        <AdminNavProvider>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:bg-paper focus:px-4 focus:py-3"
         >
           Skip to content
         </a>
-        <JsonLd data={organizationJsonLd()} />
+        <OrganizationJsonLd />
         <Header />
         <main id="main" className="flex-1">
           {children}
         </main>
         <Footer />
+        </AdminNavProvider>
       </body>
     </html>
   );

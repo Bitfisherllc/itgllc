@@ -33,6 +33,9 @@ yarn-error.log*
 # inquiry inbox when MySQL is not configured
 /data/
 
+# Local source files. Not committed and not deployed.
+/raw/
+
 # env files — keep secrets off GitHub; .env.example documents names only
 .env
 .env.*

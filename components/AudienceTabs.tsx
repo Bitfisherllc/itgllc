@@ -15,34 +15,47 @@ export function AudienceTabs({ audiences }: { audiences: HomeAudience[] }) {
         {audiences.map((item) => {
           const selected = item.id === active;
           return (
-            <button
-              key={item.id}
-              type="button"
-              role="tab"
-              id={`tab-${item.id}`}
-              aria-selected={selected}
-              aria-controls={`panel-${item.id}`}
-              onClick={() => setActive(item.id)}
-              className={`flex w-full items-center justify-between border-b border-line py-4 text-left font-serif text-2xl transition-colors ${
-                selected ? "text-ink" : "text-muted hover:text-ink"
-              }`}
-            >
-              <span className="flex items-center gap-3">
-                <Icon icon={iconFor(audienceIcons, item.id)} className="text-base text-brass" />
-                {item.label}
-              </span>
-              <span aria-hidden="true" className={selected ? "text-brass" : "opacity-0"}>
-                —
-              </span>
-            </button>
+            <div key={item.id}>
+              <button
+                type="button"
+                role="tab"
+                id={`tab-${item.id}`}
+                aria-selected={selected}
+                aria-controls={`panel-${item.id}`}
+                onClick={() => setActive(item.id)}
+                className={`flex w-full items-center justify-between border-b border-line py-4 text-left font-serif text-2xl transition-colors ${
+                  selected ? "text-ink" : "text-muted hover:text-ink"
+                }`}
+              >
+                <span className="flex items-center gap-3">
+                  <Icon icon={iconFor(audienceIcons, item.id)} className="text-base text-brass" />
+                  {item.label}
+                </span>
+                <span aria-hidden="true" className={selected ? "text-brass" : "opacity-0"}>
+                  —
+                </span>
+              </button>
+              {selected ? (
+                <div
+                  role="tabpanel"
+                  id={`panel-${item.id}`}
+                  aria-labelledby={`tab-${item.id}`}
+                  className="mb-2 border border-line bg-white/50 p-6 lg:hidden"
+                >
+                  <p className="eyebrow text-brass">Who we serve</p>
+                  <h3 className="display mt-4 text-3xl">{item.label}</h3>
+                  <p className="mt-4 text-lg leading-relaxed text-ink-soft">{item.text}</p>
+                </div>
+              ) : null}
+            </div>
           );
         })}
       </div>
       <div
         role="tabpanel"
-        id={`panel-${current.id}`}
+        id={`panel-${current.id}-wide`}
         aria-labelledby={`tab-${current.id}`}
-        className="border border-line bg-white/50 p-8 lg:col-span-7 lg:p-12"
+        className="hidden border border-line bg-white/50 p-8 lg:col-span-7 lg:block lg:p-12"
       >
         <p className="eyebrow text-brass">Who we serve</p>
         <h3 className="display mt-4 text-4xl">{current.label}</h3>

@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { inquiryOptions, prepareInquiry, type InquiryIntent } from "@/lib/inquiry";
-import { coverageStates } from "@/lib/site";
+import { usePages } from "@/components/usePages";
 
 const fieldClass =
   "mt-2 w-full border border-line bg-white px-3 py-3 text-base text-ink outline-none focus-visible:border-brass";
 
 export function InquiryForm({ intent }: { intent: InquiryIntent }) {
+  const { coverage, contact } = usePages();
+  const departments = contact.departments.map((department) => department.label);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [ready, setReady] = useState<{ to: string; department: string } | null>(null);
   const [sending, setSending] = useState(false);
@@ -29,7 +31,7 @@ export function InquiryForm({ intent }: { intent: InquiryIntent }) {
       sensitiveAck: form.get("sensitiveAck") === "yes",
       honeypot: String(form.get("company_website") ?? ""),
     };
-    const result = prepareInquiry(payload);
+    const result = prepareInquiry(payload, { helpOptions: departments });
 
     if (result.status === "error") {
       setReady(null);
@@ -112,7 +114,7 @@ export function InquiryForm({ intent }: { intent: InquiryIntent }) {
       <Select label="I am a" name="role" error={errors.role} options={inquiryOptions.roles} />
 
       {intent === "contact" ? (
-        <Select label="How can we help?" name="help" error={errors.help} options={inquiryOptions.helpOptions} />
+        <Select label="Department" name="help" error={errors.help} options={departments} />
       ) : (
         <div className="grid gap-5 sm:grid-cols-2">
           <Select
@@ -125,7 +127,7 @@ export function InquiryForm({ intent }: { intent: InquiryIntent }) {
             label="Property state"
             name="propertyState"
             error={errors.propertyState}
-            options={[...coverageStates, "Another state", "Not sure yet"]}
+            options={[...coverage.states, "Another state", "Not sure yet"]}
           />
         </div>
       )}
