@@ -191,12 +191,8 @@ async function handleApi(req, res) {
 
     if (req.method === "GET" && pathname === "/api/home") {
       const content = await home.readHome();
-      const slides = [...content.heroSlides];
-      const heroPath = String(content.heroImage || "").split("?")[0];
-      const heroShown = slides.some((src) => String(src).split("?")[0] === heroPath);
-      if (heroPath && heroPath !== "/images/home/hero.jpg" && !heroShown) slides.unshift(content.heroImage);
-      const publishedSlides = slides.length ? slides : [content.heroImage];
-      sendJson(res, 200, { ok: true, content, slides: publishedSlides });
+      const slides = (content.heroSlides || []).filter((src) => String(src).split("?")[0].endsWith(".mp4"));
+      sendJson(res, 200, { ok: true, content, slides });
       return;
     }
 

@@ -16,7 +16,7 @@ import { fillTree } from "@/lib/office";
 import savedHome from "@/data/home.json";
 
 const publishedHome = savedHome as HomeContent;
-const publishedSlides = publishedHome.heroSlides?.length ? publishedHome.heroSlides : [publishedHome.heroImage];
+const publishedSlides = (publishedHome.heroSlides || []).filter((src) => src.split("?")[0].endsWith(".mp4"));
 
 export function HomePageView() {
   const pages = usePages();
@@ -32,7 +32,7 @@ export function HomePageView() {
         .then((body: { content?: HomeContent; slides?: string[] }) => {
           if (cancelled) return;
           if (body.content) setCopy(body.content);
-          if (body.slides?.length) setSlides(body.slides);
+          if (body.slides) setSlides(body.slides.filter((src) => src.split("?")[0].endsWith(".mp4")));
         })
         .catch(() => undefined);
     }
@@ -75,7 +75,7 @@ export function HomePageView() {
         <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-3 md:px-8 md:py-16">
           {view.pillars.map((item, index) => (
             <div key={item.title}>
-              <div className="relative aspect-[3/2] overflow-hidden rounded-lg bg-paper-deep">
+              <div className="photo-shadow relative aspect-[3/2] overflow-hidden rounded-lg bg-paper-deep">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={item.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
               </div>
@@ -142,7 +142,7 @@ export function HomePageView() {
 
       <section className="bg-ink text-paper">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 md:px-8 lg:grid-cols-2 lg:py-28">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+          <div className="photo-shadow relative aspect-[4/3] overflow-hidden rounded-lg">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={view.aboutImage}

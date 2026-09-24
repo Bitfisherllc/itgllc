@@ -26,7 +26,7 @@ export function HeroSlideshow({
   logo: string;
   logoSize: number;
 }) {
-  const slides = images.filter(Boolean);
+  const slides = images.filter((src) => isVideo(src));
   const [index, setIndex] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
   const [phase, setPhase] = useState<Phase>("playing");
@@ -100,11 +100,19 @@ export function HeroSlideshow({
     setPhase("frame");
     later(LAST_FRAME_MS, () => setPhase("black"));
     later(LAST_FRAME_MS + FADE_MS, () => setPhase("logo"));
-    if (slides.length > 1) {
-      later(LAST_FRAME_MS + FADE_MS + FADE_MS + LOGO_HOLD_MS, () => {
+    later(LAST_FRAME_MS + FADE_MS + FADE_MS + LOGO_HOLD_MS, () => {
+      if (slides.length > 1) {
         setIndex((current) => (current + 1) % slides.length);
-      });
-    }
+        return;
+      }
+      ending.current = false;
+      setPhase("playing");
+      const again = videos.current[src];
+      if (again) {
+        again.currentTime = 0;
+        again.play().catch(() => undefined);
+      }
+    });
   }
 
   return (

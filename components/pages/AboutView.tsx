@@ -23,7 +23,7 @@ export function AboutView() {
           ]}
         />
         <div className="grid items-start gap-12 lg:grid-cols-2">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+          <div className="photo-shadow relative aspect-[4/3] overflow-hidden rounded-lg">
             <Image
               src={about.image}
               alt={about.imageAlt}

@@ -25,7 +25,7 @@ export function TeamView() {
               <li key={`${person.name}-${person.role}`} className="border border-line bg-white p-6">
                 {person.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={person.image} alt={person.name} className="mb-5 h-auto w-full rounded-lg" />
+                  <img src={person.image} alt={person.name} className="photo-shadow mb-5 h-auto w-full rounded-lg" />
                 ) : null}
                 <h2 className="font-serif text-2xl">{person.name}</h2>
                 {person.role ? <p className="mt-2 text-sm font-semibold text-brass-deep">{person.role}</p> : null}

@@ -28,7 +28,7 @@ export function CoverageView() {
               alt={coverage.mapAlt}
               width={1920}
               height={940}
-              className="h-auto w-full rounded-lg border border-line"
+              className="photo-shadow h-auto w-full rounded-lg border border-line"
             />
             <figcaption className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-ink">
               <span className="inline-flex items-center gap-2">

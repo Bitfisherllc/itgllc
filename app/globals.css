@@ -86,6 +86,10 @@ html[data-admin] iframe[name="stage"] {
   border-radius: 0.5rem;
 }
 
+.photo-shadow {
+  box-shadow: 0 10px 24px -12px rgb(0 0 0 / 0.45);
+}
+
 @keyframes rise {
   from {
     opacity: 0;
