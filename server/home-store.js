@@ -2,6 +2,9 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { mergeHome } = require("../lib/home-content.cjs");
 const documents = require("./documents");
+const savedHome = require("../data/home.json");
+const savedPages = require("../data/pages.json");
+const savedLibrary = require("../data/library.json");
 
 const filePath = path.join(__dirname, "..", "data", "home.json");
 
@@ -54,14 +57,23 @@ function writeFile(content) {
   fs.renameSync(temporary, filePath);
 }
 
+function chosenHome() {
+  return savedHome || readFile();
+}
+
+async function publishChosenPhotos() {
+  const seeded = mergeHome(chosenHome());
+  await documents.writeJson("home", seeded);
+  if (savedPages && typeof savedPages === "object") await documents.writeJson("pages", savedPages);
+  if (savedLibrary && typeof savedLibrary === "object") await documents.writeJson("library", savedLibrary);
+  return seeded;
+}
+
 async function readHome() {
   if (documents.enabled()) {
     const stored = await documents.readJson("home");
-    if (stored == null) {
-      const seeded = mergeHome(readFile());
-      await documents.writeJson("home", seeded);
-      return seeded;
-    }
+    const hero = String(stored && stored.heroImage ? stored.heroImage : "").split("?")[0];
+    if (stored == null || hero === "/images/home/hero.jpg") return publishChosenPhotos();
     return mergeHome(stored);
   }
   if (mysqlConfig()) {

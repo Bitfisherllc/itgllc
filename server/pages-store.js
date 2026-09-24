@@ -3,6 +3,7 @@ const path = require("node:path");
 const { mergePage, mergePages, pageCopy } = require("../lib/page-copy.cjs");
 const { addressFromPlace } = require("./google-places");
 const documents = require("./documents");
+const home = require("./home-store");
 
 const filePath = path.join(__dirname, "..", "data", "pages.json");
 
@@ -57,6 +58,7 @@ function writeFile(pages) {
 
 async function readStored() {
   if (documents.enabled()) {
+    await home.readHome();
     const stored = await documents.readJson("pages");
     if (stored && typeof stored === "object") return stored;
     const fromFile = readFile();

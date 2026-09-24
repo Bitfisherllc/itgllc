@@ -4,6 +4,7 @@ const path = require("node:path");
 
 const documents = require("./documents");
 const blobs = require("./blob-files");
+const home = require("./home-store");
 
 const root = path.join(__dirname, "..");
 const catalogPath = path.join(root, "data", "library.json");
@@ -89,6 +90,7 @@ function writeStoreFile(store) {
 
 async function readStore() {
   if (documents.enabled()) {
+    await home.readHome();
     const stored = await documents.readJson("library");
     if (stored && typeof stored === "object") {
       return {
@@ -188,7 +190,8 @@ async function listImages() {
   const diskIds = new Set(onDisk.map((image) => image.id));
   const merged = new Map();
   for (const image of catalog) {
-    if (diskIds.has(image.id) || String(image.src).startsWith("https://")) merged.set(image.id, image);
+    const src = String(image.src || "");
+    if (diskIds.has(image.id) || src.startsWith("https://") || src.startsWith("/images/")) merged.set(image.id, image);
   }
   for (const image of onDisk) {
     if (!merged.has(image.id)) merged.set(image.id, image);
