@@ -25,12 +25,22 @@
  * - Social profiles suitable for the ITG name
  */
 
+function siteUrl() {
+  const value = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (!value) return "http://localhost:3000";
+  try {
+    return new URL(value).origin;
+  } catch {
+    return "http://localhost:3000";
+  }
+}
+
 export const site = {
   name: "ITG",
   legalName: "Integrity Title Group",
   description:
     "Integrity Title Group provides professional title and settlement services for purchase and refinance transactions, from the opened order through funding and recording.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  url: siteUrl(),
   email: "info@ravents.com",
   phone: "443.725.7020",
   phoneHref: "tel:+14437257020",
