@@ -2,6 +2,9 @@ const crypto = require("node:crypto");
 const fs = require("node:fs");
 const path = require("node:path");
 
+const documents = require("./documents");
+const blobs = require("./blob-files");
+
 const root = path.join(__dirname, "..");
 const catalogPath = path.join(root, "data", "library.json");
 const libraryDir = path.join(root, "public", "images", "library");
@@ -85,6 +88,18 @@ function writeStoreFile(store) {
 }
 
 async function readStore() {
+  if (documents.enabled()) {
+    const stored = await documents.readJson("library");
+    if (stored && typeof stored === "object") {
+      return {
+        images: Array.isArray(stored.images) ? stored.images : [],
+        removed: Array.isArray(stored.removed) ? stored.removed.filter(validId) : [],
+      };
+    }
+    const seeded = readStoreFile();
+    await documents.writeJson("library", seeded);
+    return seeded;
+  }
   if (mysqlConfig()) {
     const db = await getPool();
     await db.query(`
@@ -103,6 +118,10 @@ async function readStore() {
 }
 
 async function writeStore(store) {
+  if (documents.enabled()) {
+    await documents.writeJson("library", store);
+    return;
+  }
   if (mysqlConfig()) {
     const db = await getPool();
     await db.query("DELETE FROM image_library");
@@ -169,7 +188,7 @@ async function listImages() {
   const diskIds = new Set(onDisk.map((image) => image.id));
   const merged = new Map();
   for (const image of catalog) {
-    if (diskIds.has(image.id)) merged.set(image.id, image);
+    if (diskIds.has(image.id) || String(image.src).startsWith("https://")) merged.set(image.id, image);
   }
   for (const image of onDisk) {
     if (!merged.has(image.id)) merged.set(image.id, image);
@@ -197,7 +216,9 @@ async function addImage(buffer, extension) {
   store.removed = store.removed.filter((removedId) => removedId !== id);
   await writeStore(store);
   await ensureSeeds();
-  const src = writeLibraryFile(id, extension, buffer);
+  const src = blobs.enabled()
+    ? await blobs.saveFile(`library/${id}.${extension}`, buffer, `image/${extension === "jpg" ? "jpeg" : extension}`)
+    : writeLibraryFile(id, extension, buffer);
   const catalog = await readCatalog();
   const next = [
     { id, src, addedAt: new Date().toISOString() },
@@ -221,6 +242,7 @@ async function removeImage(id) {
   if (!store.removed.includes(id)) store.removed.push(id);
   store.images = store.images.filter((item) => item.id !== id);
   await writeStore(store);
+  if (String(image.src).startsWith("https://")) await blobs.deleteFile(image.src);
   for (const folder of publishFolders()) {
     for (const extension of ["jpg", "jpeg", "png", "webp"]) {
       const file = path.join(folder, `${id}.${extension}`);

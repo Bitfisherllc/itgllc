@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { mergeHome } = require("../lib/home-content.cjs");
+const documents = require("./documents");
 
 const filePath = path.join(__dirname, "..", "data", "home.json");
 
@@ -54,6 +55,15 @@ function writeFile(content) {
 }
 
 async function readHome() {
+  if (documents.enabled()) {
+    const stored = await documents.readJson("home");
+    if (stored == null) {
+      const seeded = mergeHome(readFile());
+      await documents.writeJson("home", seeded);
+      return seeded;
+    }
+    return mergeHome(stored);
+  }
   if (mysqlConfig()) {
     const db = await getPool();
     const [rows] = await db.query("SELECT body FROM home_content WHERE id = 1 LIMIT 1");
@@ -69,6 +79,10 @@ async function readHome() {
 
 async function writeHome(input) {
   const content = mergeHome(input);
+  if (documents.enabled()) {
+    await documents.writeJson("home", content);
+    return content;
+  }
   if (mysqlConfig()) {
     const db = await getPool();
     const body = JSON.stringify(content);

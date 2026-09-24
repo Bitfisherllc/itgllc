@@ -8,6 +8,7 @@ const library = require("./library");
 const media = require("./media");
 const store = require("./inquiry-store");
 const places = require("./google-places");
+const documents = require("./documents");
 
 const attempts = new Map();
 
@@ -67,7 +68,7 @@ function readBody(req) {
   });
 }
 
-function listFooterLogos() {
+async function listFooterLogos() {
   const dir = path.join(__dirname, "..", "public", "logo", "ANIMATIONS");
   let names = [];
   try {
@@ -75,7 +76,7 @@ function listFooterLogos() {
   } catch {
     names = [];
   }
-  return names
+  const disk = names
     .filter((name) => /^[a-zA-Z0-9][a-zA-Z0-9._-]*\.svg$/.test(name))
     .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
     .map((name) => ({
@@ -85,6 +86,11 @@ function listFooterLogos() {
         .replace(/[-_]+/g, " ")
         .replace(/\b\w/g, (letter) => letter.toUpperCase()),
     }));
+  if (!documents.enabled()) return disk;
+  const stored = await documents.readJson("animations");
+  const extra = Array.isArray(stored) ? stored : [];
+  const seen = new Set(disk.map((item) => item.src));
+  return disk.concat(extra.filter((item) => item && item.src && !seen.has(item.src)));
 }
 
 function clientKey(req) {
@@ -264,20 +270,20 @@ async function handleApi(req, res) {
     }
 
     if (req.method === "GET" && pathname === "/api/admin/footer-logos") {
-      sendJson(res, 200, { ok: true, logos: listFooterLogos() });
+      sendJson(res, 200, { ok: true, logos: await listFooterLogos() });
       return;
     }
 
     if (req.method === "POST" && pathname === "/api/admin/footer-logos") {
       const buffer = await readBytes(req, 1024 * 1024, "Use an SVG under 1 MB.");
       const saved = await media.saveAnimation(buffer, url.searchParams.get("name") || "");
-      sendJson(res, 200, { ok: true, src: saved.src, logos: listFooterLogos() });
+      sendJson(res, 200, { ok: true, src: saved.src, logos: await listFooterLogos() });
       return;
     }
 
     if (req.method === "POST" && pathname === "/api/admin/footer-logos/choose") {
       const body = await readBody(req);
-      const logos = listFooterLogos();
+      const logos = await listFooterLogos();
       const src = String(body.src || "");
       if (!logos.some((item) => item.src === src)) {
         sendJson(res, 400, { ok: false, error: "That animation was not found." });
@@ -291,7 +297,7 @@ async function handleApi(req, res) {
 
     if (req.method === "POST" && pathname === "/api/admin/footer-logos/delete") {
       const body = await readBody(req);
-      const logos = listFooterLogos();
+      const logos = await listFooterLogos();
       const src = String(body.src || "");
       if (!logos.some((item) => item.src === src)) {
         sendJson(res, 400, { ok: false, error: "That animation was not found." });
@@ -301,8 +307,8 @@ async function handleApi(req, res) {
         sendJson(res, 400, { ok: false, error: "Keep at least one animation in the gallery." });
         return;
       }
-      media.deleteAnimationFile(src);
-      const remaining = listFooterLogos();
+      await media.deleteAnimationFile(src);
+      const remaining = await listFooterLogos();
       const current = await pages.readPages();
       let content = current.other;
       if (current.other.footerLogo === src) {

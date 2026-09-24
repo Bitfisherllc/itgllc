@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { mergePage, mergePages, pageCopy } = require("../lib/page-copy.cjs");
 const { addressFromPlace } = require("./google-places");
+const documents = require("./documents");
 
 const filePath = path.join(__dirname, "..", "data", "pages.json");
 
@@ -55,6 +56,14 @@ function writeFile(pages) {
 }
 
 async function readStored() {
+  if (documents.enabled()) {
+    const stored = await documents.readJson("pages");
+    if (stored && typeof stored === "object") return stored;
+    const fromFile = readFile();
+    const seeded = fromFile && typeof fromFile === "object" ? fromFile : {};
+    await documents.writeJson("pages", seeded);
+    return seeded;
+  }
   if (mysqlConfig()) {
     const db = await getPool();
     const [rows] = await db.query("SELECT id, body FROM page_content");
@@ -107,6 +116,12 @@ async function writePage(id, input) {
       const details = await addressFromPlace(content.placeId);
       content = { ...content, ...details };
     }
+  }
+  if (documents.enabled()) {
+    const stored = await readStored();
+    stored[id] = content;
+    await documents.writeJson("pages", stored);
+    return content;
   }
   if (mysqlConfig()) {
     const db = await getPool();

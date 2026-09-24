@@ -2,6 +2,8 @@ const fs = require("node:fs");
 const path = require("node:path");
 const crypto = require("node:crypto");
 
+const documents = require("./documents");
+
 const filePath = path.join(__dirname, "..", "data", "inquiries.json");
 
 function mysqlConfig() {
@@ -91,6 +93,14 @@ async function addInquiry(inquiry) {
     ...inquiry,
   };
 
+  if (documents.enabled()) {
+    const items = (await documents.readJson("inquiries")) || [];
+    const next = Array.isArray(items) ? items : [];
+    next.push(record);
+    await documents.writeJson("inquiries", next);
+    return record;
+  }
+
   const config = mysqlConfig();
   if (config) {
     const db = await getPool();
@@ -125,6 +135,11 @@ async function addInquiry(inquiry) {
 }
 
 async function listInquiries() {
+  if (documents.enabled()) {
+    const items = await documents.readJson("inquiries");
+    const list = Array.isArray(items) ? items : [];
+    return list.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  }
   if (mysqlConfig()) {
     const db = await getPool();
     const [rows] = await db.query("SELECT * FROM inquiries ORDER BY created_at DESC");
@@ -135,6 +150,15 @@ async function listInquiries() {
 
 async function setInquiryStatus(id, status) {
   if (status !== "new" && status !== "reviewed") return null;
+  if (documents.enabled()) {
+    const items = await documents.readJson("inquiries");
+    const list = Array.isArray(items) ? items : [];
+    const item = list.find((entry) => entry.id === id);
+    if (!item) return null;
+    item.status = status;
+    await documents.writeJson("inquiries", list);
+    return item;
+  }
   if (mysqlConfig()) {
     const db = await getPool();
     const [result] = await db.query("UPDATE inquiries SET status = ? WHERE id = ?", [status, id]);

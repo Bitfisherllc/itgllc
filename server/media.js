@@ -4,6 +4,8 @@ const path = require("node:path");
 const { homeContent } = require("../lib/home-content.cjs");
 const home = require("./home-store");
 const library = require("./library");
+const blobs = require("./blob-files");
+const documents = require("./documents");
 
 const maxBytes = 5 * 1024 * 1024;
 
@@ -129,14 +131,19 @@ async function saveHeroLogo(buffer) {
   const svg = sanitizeSvg(buffer);
   const id = crypto.createHash("sha256").update(svg).digest("hex").slice(0, 16);
   const name = `${id}.svg`;
-  const folders = [path.join(__dirname, "..", "public", "logo", "custom")];
-  if (fs.existsSync(path.join(__dirname, "..", "out"))) folders.push(path.join(__dirname, "..", "out", "logo", "custom"));
-  for (const folder of folders) {
-    fs.mkdirSync(folder, { recursive: true });
-    fs.writeFileSync(path.join(folder, name), svg);
-  }
   const content = await home.readHome();
-  content.heroLogo = `/logo/custom/${name}?v=${Date.now()}`;
+  if (blobs.enabled()) {
+    const url = await blobs.saveFile(`logo/custom/${name}`, svg, "image/svg+xml");
+    content.heroLogo = `${url}?v=${Date.now()}`;
+  } else {
+    const folders = [path.join(__dirname, "..", "public", "logo", "custom")];
+    if (fs.existsSync(path.join(__dirname, "..", "out"))) folders.push(path.join(__dirname, "..", "out", "logo", "custom"));
+    for (const folder of folders) {
+      fs.mkdirSync(folder, { recursive: true });
+      fs.writeFileSync(path.join(folder, name), svg);
+    }
+    content.heroLogo = `/logo/custom/${name}?v=${Date.now()}`;
+  }
   return { content: await home.writeHome(content) };
 }
 
@@ -159,6 +166,19 @@ async function saveAnimation(buffer, originalName) {
   if (!buffer.length || buffer.length > 1024 * 1024) throw reject(400, "Use an SVG under 1 MB.");
   const svg = sanitizeSvg(buffer);
   const name = animationFileName(originalName, svg);
+  if (blobs.enabled()) {
+    const url = await blobs.saveFile(`logo/animations/${name}`, svg, "image/svg+xml");
+    const current = await documents.readJson("animations");
+    const logos = Array.isArray(current) ? current : [];
+    if (!logos.some((item) => item.src === url)) {
+      logos.push({
+        src: url,
+        label: name.replace(/\.svg$/i, "").replace(/[-_]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase()),
+      });
+      await documents.writeJson("animations", logos);
+    }
+    return { src: url };
+  }
   const primary = animationFolders()[0];
   const destination = path.join(primary, name);
   if (fs.existsSync(destination)) {
@@ -180,7 +200,16 @@ function saveNamedAnimation(svg, name) {
   return { src: `/logo/ANIMATIONS/${name}` };
 }
 
-function deleteAnimationFile(src) {
+async function deleteAnimationFile(src) {
+  if (String(src).startsWith("https://")) {
+    await blobs.deleteFile(src);
+    if (documents.enabled()) {
+      const current = await documents.readJson("animations");
+      const logos = Array.isArray(current) ? current.filter((item) => item.src !== src) : [];
+      await documents.writeJson("animations", logos);
+    }
+    return;
+  }
   const name = path.basename(String(src || ""));
   if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]*\.svg$/.test(name)) {
     throw reject(400, "That animation was not found.");
