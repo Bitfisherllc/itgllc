@@ -71,6 +71,21 @@ html[data-admin] iframe[name="stage"] {
   height: 1px;
 }
 
+.header-action {
+  border-radius: 0.5rem;
+  color: #ffffff;
+  background-image: linear-gradient(180deg, #32b44a 0%, #27943c 100%);
+}
+
+.header-action:hover {
+  color: #ffffff;
+  background-image: linear-gradient(180deg, #2da843 0%, #207d32 100%);
+}
+
+:where(button, a, label):is(.inline-flex, .min-h-11, .min-h-12) {
+  border-radius: 0.5rem;
+}
+
 @keyframes rise {
   from {
     opacity: 0;

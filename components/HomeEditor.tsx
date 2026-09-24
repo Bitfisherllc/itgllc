@@ -785,16 +785,6 @@ export function HomeEditor() {
         </div>
         <SectionSave saving={saving} />
       </section>
-
-      <section className="border border-line bg-white p-6">
-        <h2 className="font-serif text-3xl">Closing invitation</h2>
-        <div className="mt-6 grid gap-5">
-          <Field label="Eyebrow" rows={1} value={content.ctaEyebrow} onChange={(ctaEyebrow) => update({ ctaEyebrow })} />
-          <Field label="Heading" rows={2} value={content.ctaHeading} onChange={(ctaHeading) => update({ ctaHeading })} />
-          <Field label="Paragraph" value={content.ctaText} onChange={(ctaText) => update({ ctaText })} />
-        </div>
-        <SectionSave saving={saving} />
-      </section>
     </form>
   );
 }

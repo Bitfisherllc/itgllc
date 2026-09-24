@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import type { PageCopy } from "@/lib/page-copy";
 
 export type AdminTarget =
@@ -20,6 +21,7 @@ const AdminNavContext = createContext<{
 } | null>(null);
 
 export function AdminNavProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const [target, setTarget] = useState<AdminTarget>({ kind: "home", label: "Homepage" });
   const [preview, setPreview] = useState(false);
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
@@ -49,6 +51,7 @@ export function AdminNavProvider({ children }: { children: ReactNode }) {
     setSignedIn(false);
     setPreview(false);
     setTarget({ kind: "home", label: "Homepage" });
+    router.push("/");
   }
 
   return (

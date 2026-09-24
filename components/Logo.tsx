@@ -1,8 +1,3 @@
-const sources = {
-  paper: "/logo/ITG-LIGHT.svg",
-  ink: "/logo/ITG.svg",
-} as const;
-
 export function Logo({
   tone = "ink",
   compact = false,
@@ -10,13 +5,28 @@ export function Logo({
   tone?: "ink" | "paper";
   compact?: boolean;
 }) {
+  const mark = tone === "paper" ? "#ffffff" : "#000000";
   return (
     <span className="inline-flex flex-col">
-      <img
-        src={sources[tone]}
-        alt=""
+      <svg
+        viewBox="0 0 565.78 329.83"
+        aria-hidden="true"
         className={compact ? "h-10 w-auto" : "h-14 w-auto"}
-      />
+      >
+        <rect fill={mark} x="60.99" y="38.63" width="69.75" height="247.22" />
+        <polygon
+          fill={mark}
+          points="143.17 94.01 206.26 94.01 206.26 285.84 272.65 285.84 272.65 94.01 336.84 94.01 336.84 38.63 143.17 38.63 143.17 94.01"
+        />
+        <path
+          fill={mark}
+          d="M456.63,139.13v51.35h33.01v42.55c-2.93,1.1-11.74,2.2-20.54,2.2-40.71,0-70.42-26.77-70.42-72.99,0-50.25,33.74-71.52,74.46-71.52,28.24,0,44.75,4.4,58.69,10.27l13.2-52.82c-12.84-6.24-38.15-12.1-71.52-12.1-80.33,0-144.15,43.65-144.52,129.47,0,35.58,12.1,67.49,35.21,89.5,22.38,21.27,55.39,33.38,104.17,33.38,32.28,0,66.75-8.07,85.1-14.3v-134.98h-96.83Z"
+        />
+        <path
+          fill="#32b44a"
+          d="M83.99,18.25L17.6,38.63v247.22l66.39,20.38V18.25ZM69.22,170.11c-4.35,0-7.88-5.27-7.88-11.77s3.53-11.77,7.88-11.77,7.88,5.27,7.88,11.77-3.53,11.77-7.88,11.77Z"
+        />
+      </svg>
       {compact ? null : (
         <span className="mt-3 text-[0.62rem] font-medium tracking-[0.16em] uppercase opacity-70">
           Integrity Title Group

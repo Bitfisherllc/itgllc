@@ -28,7 +28,6 @@ export function HeroSlideshow({
 }) {
   const slides = images.filter(Boolean);
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const [phase, setPhase] = useState<Phase>("playing");
   const videos = useRef<Record<string, HTMLVideoElement | null>>({});
@@ -56,12 +55,12 @@ export function HeroSlideshow({
   }, []);
 
   useEffect(() => {
-    if (paused || reduceMotion || slides.length < 2 || isVideo(activeSrc)) return;
+    if (reduceMotion || slides.length < 2 || isVideo(activeSrc)) return;
     const timer = window.setInterval(() => {
       setIndex((current) => (current + 1) % slides.length);
     }, HOLD_MS);
     return () => window.clearInterval(timer);
-  }, [paused, reduceMotion, slides.length, activeSrc]);
+  }, [reduceMotion, slides.length, activeSrc]);
 
   useEffect(() => {
     if (slides.length < 2) return;
@@ -79,19 +78,12 @@ export function HeroSlideshow({
       if (!video) continue;
       if (src === activeSrc && !reduceMotion) {
         video.currentTime = 0;
-        if (!paused) video.play().catch(() => undefined);
+        video.play().catch(() => undefined);
       } else {
         video.pause();
       }
     }
   }, [activeSrc, reduceMotion]);
-
-  useEffect(() => {
-    const video = videos.current[activeSrc];
-    if (!video || !isVideo(activeSrc) || reduceMotion || ending.current) return;
-    if (paused) video.pause();
-    else video.play().catch(() => undefined);
-  }, [paused, activeSrc, reduceMotion]);
 
   useEffect(() => clearTimers, []);
 
@@ -113,10 +105,6 @@ export function HeroSlideshow({
         setIndex((current) => (current + 1) % slides.length);
       });
     }
-  }
-
-  function step(direction: number) {
-    setIndex((current) => (current + direction + slides.length) % slides.length);
   }
 
   return (
@@ -199,22 +187,6 @@ export function HeroSlideshow({
           />
         );
       })}
-      {slides.length > 1 && !reduceMotion ? (
-        <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 bg-ink/70 px-2 py-1 text-xs font-semibold text-paper">
-          <button type="button" className="min-h-9 px-2" onClick={() => step(-1)} aria-label="Previous slide">
-            Previous
-          </button>
-          <span aria-live="polite">
-            {active + 1} / {slides.length}
-          </span>
-          <button type="button" className="min-h-9 px-2" onClick={() => step(1)} aria-label="Next slide">
-            Next
-          </button>
-          <button type="button" className="min-h-9 px-2" onClick={() => setPaused((current) => !current)}>
-            {paused ? "Play" : "Pause"}
-          </button>
-        </div>
-      ) : null}
     </div>
   );
 }

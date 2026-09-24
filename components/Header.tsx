@@ -10,7 +10,7 @@ import { Logo } from "@/components/Logo";
 import { QuoteLink } from "@/components/QuoteLink";
 import { menuItemActive, menuSectionActive, previewPath, targetFor, useAdminNav } from "@/components/AdminNav";
 import { usePages } from "@/components/usePages";
-import { faFileLines, iconFor, pageIcons, resourceIcons, serviceIcons } from "@/lib/icons";
+import { faFileLines, faHouseHeart, iconFor, pageIcons, resourceIcons, serviceIcons } from "@/lib/icons";
 import { type PageCopy } from "@/lib/page-copy";
 import { nav, site } from "@/lib/site";
 
@@ -290,7 +290,7 @@ export function Header() {
           {admin ? null : (
             <>
               <QuoteLink
-                className="!hidden bg-brass px-4 py-2.5 text-sm font-semibold uppercase tracking-wide text-ink hover:bg-brass-deep hover:text-paper lg:!inline-flex"
+                className="header-action !hidden px-4 py-2.5 text-sm font-semibold uppercase tracking-wide lg:!inline-flex"
                 onOpen={() => setOpen(false)}
               >
                 Get a quote
@@ -299,9 +299,10 @@ export function Header() {
                 href={site.qualiaConnectUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden text-sm font-semibold hover:text-brass-deep lg:inline"
+                className="header-action hidden items-center gap-2 px-4 py-2.5 text-sm font-semibold uppercase tracking-wide lg:inline-flex"
               >
-                Login
+                <Icon icon={faHouseHeart} className="text-lg text-current" />
+                Open Qualia
               </a>
             </>
           )}
@@ -415,7 +416,7 @@ export function Header() {
           {admin ? null : (
             <>
               <QuoteLink
-                className="mt-4 justify-center bg-brass px-4 py-3 text-sm font-semibold uppercase tracking-wide text-ink"
+                className="header-action mt-4 justify-center px-4 py-3 text-sm font-semibold uppercase tracking-wide"
                 onOpen={() => setOpen(false)}
               >
                 Get a quote
@@ -424,9 +425,10 @@ export function Header() {
                 href={site.qualiaConnectUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="border-b border-line py-4 text-lg font-semibold"
+                className="header-action mt-4 inline-flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold uppercase tracking-wide"
               >
-                Login
+                <Icon icon={faHouseHeart} className="text-lg text-current" />
+                Open Qualia
               </a>
             </>
           )}

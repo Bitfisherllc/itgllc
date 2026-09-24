@@ -3,6 +3,7 @@ export {
   fillTree,
   formatOfficeAddress,
   googleDirectionsUrl,
+  googlePlaceUrl,
   googleMapEmbedUrl,
   presentPages,
   telHref,

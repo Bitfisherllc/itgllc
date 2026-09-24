@@ -12,7 +12,7 @@ const fieldClass =
 const saveButtonClass =
   "inline-flex min-h-12 w-fit items-center justify-center bg-ink px-6 text-sm font-semibold text-paper disabled:opacity-60";
 
-const hidden = new Set(["slug", "image", "disclaimer", "entries", "lat", "lon", "placeId"]);
+const hidden = new Set(["slug", "image", "disclaimer", "entries", "lat", "lon", "placeId", "footer"]);
 
 const labels: Record<string, string> = {
   eyebrow: "Eyebrow",

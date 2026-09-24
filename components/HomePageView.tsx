@@ -55,7 +55,7 @@ export function HomePageView() {
             </h1>
             <p className="title-copy mt-6 max-w-md text-lg leading-relaxed text-paper/80">{view.heroLede}</p>
             <div className="title-copy mt-10 flex flex-col items-end gap-3 sm:flex-row sm:justify-end">
-              <QuoteLink className="min-h-12 justify-center border border-paper bg-paper px-6 text-sm font-semibold tracking-wide text-ink hover:bg-paper-deep">
+              <QuoteLink className="header-action min-h-12 justify-center px-6 text-sm font-semibold uppercase tracking-wide">
                 Get an Instant Quote
               </QuoteLink>
               <Button href="/services" variant="ghost">
@@ -63,8 +63,10 @@ export function HomePageView() {
               </Button>
             </div>
           </Reveal>
-          <div className="relative order-1 h-56 overflow-hidden sm:h-64 md:order-2 md:h-auto">
-            <HeroSlideshow images={slides} logo={view.heroLogo} logoSize={view.heroLogoSize} />
+          <div className="order-1 p-4 sm:p-6 md:order-2 lg:p-8">
+            <div className="relative h-56 overflow-hidden rounded-lg sm:h-64 md:h-full">
+              <HeroSlideshow images={slides} logo={view.heroLogo} logoSize={view.heroLogoSize} />
+            </div>
           </div>
         </div>
       </section>
@@ -73,7 +75,7 @@ export function HomePageView() {
         <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-3 md:px-8 md:py-16">
           {view.pillars.map((item, index) => (
             <div key={item.title}>
-              <div className="relative aspect-[3/2] overflow-hidden bg-paper-deep">
+              <div className="relative aspect-[3/2] overflow-hidden rounded-lg bg-paper-deep">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={item.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
               </div>
@@ -140,7 +142,7 @@ export function HomePageView() {
 
       <section className="bg-ink text-paper">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 md:px-8 lg:grid-cols-2 lg:py-28">
-          <div className="relative aspect-[4/3] overflow-hidden">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={view.aboutImage}
@@ -198,22 +200,6 @@ export function HomePageView() {
               </li>
             ))}
           </ul>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-6 py-20 md:px-8 md:py-28">
-        <Reveal className="grid items-end gap-8 lg:grid-cols-2">
-          <div>
-            <p className="title-kicker eyebrow text-brass">{view.ctaEyebrow}</p>
-            <h2 className="title-slide display mt-4 text-5xl md:text-6xl">{view.ctaHeading}</h2>
-          </div>
-          <p className="title-copy leading-relaxed text-ink-soft">{view.ctaText}</p>
-        </Reveal>
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-          <Button href="/order">Start a Title Order</Button>
-          <Button href="/contact" variant="ghost">
-            Contact the office
-          </Button>
         </div>
       </section>
     </>
