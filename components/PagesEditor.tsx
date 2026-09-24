@@ -449,7 +449,7 @@ export function PagesEditor({
     if (problems.length) setError("Use an SVG under 1 MB.");
   }
 
-  async function useAnimation(src: string) {
+  async function chooseAnimation(src: string) {
     if (id !== "other" || !("footerLogo" in pages.other)) return;
     setLogoBusy(true);
     setError("");
@@ -727,7 +727,7 @@ export function PagesEditor({
                               type="button"
                               aria-pressed={selected}
                               disabled={logoBusy || selected}
-                              onClick={() => useAnimation(item.src)}
+                              onClick={() => chooseAnimation(item.src)}
                               className="inline-flex min-h-11 items-center bg-ink px-4 text-sm font-semibold text-paper disabled:opacity-60"
                             >
                               {selected ? "In use" : "Use this animation"}
