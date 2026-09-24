@@ -566,7 +566,7 @@ export function HomeEditor() {
             onError={setError}
           />
           <p className="text-sm text-ink-soft">
-            This photograph stays out of the hero until you add it in the slideshow.
+            Choosing a photograph places it first in the hero. The slideshow can add more slides after it.
           </p>
           <SlideshowField
             content={content}

@@ -66,7 +66,9 @@ async function readStored() {
         stored[row.id] = null;
       }
     }
-    return stored;
+    if (Object.keys(stored).length) return stored;
+    const fromFile = readFile();
+    return fromFile && typeof fromFile === "object" ? fromFile : {};
   }
   const stored = readFile();
   return stored && typeof stored === "object" ? stored : {};

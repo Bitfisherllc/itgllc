@@ -57,7 +57,7 @@ async function readHome() {
   if (mysqlConfig()) {
     const db = await getPool();
     const [rows] = await db.query("SELECT body FROM home_content WHERE id = 1 LIMIT 1");
-    if (!rows[0]) return mergeHome(null);
+    if (!rows[0]) return mergeHome(readFile());
     try {
       return mergeHome(JSON.parse(rows[0].body));
     } catch {

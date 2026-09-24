@@ -39,7 +39,16 @@ async function assignSlot(slot, src) {
   if (!slots.has(slot)) throw reject(400, "That image cannot be replaced.");
   const content = await home.readHome();
   const image = versioned(src);
-  if (slot === "hero") content.heroImage = image;
+  if (slot === "hero") {
+    const previous = String(content.heroImage || "").split("?")[0];
+    const nextPath = image.split("?")[0];
+    content.heroImage = image;
+    const rest = (content.heroSlides || []).filter((src) => {
+      const pathOnly = String(src).split("?")[0];
+      return pathOnly !== previous && pathOnly !== nextPath && pathOnly !== "/images/home/hero.jpg";
+    });
+    content.heroSlides = [image, ...rest];
+  }
   else if (slot === "about") content.aboutImage = image;
   else content.pillars[Number(slot.slice("pillar-".length))].image = image;
   return home.writeHome(content);
