@@ -11,13 +11,17 @@ import { ProcessTimeline } from "@/components/ProcessTimeline";
 import { Reveal } from "@/components/Reveal";
 import { faLocationDot, iconFor, pillarIcons, reasonIcons, serviceIcons } from "@/lib/icons";
 import { usePages } from "@/components/usePages";
-import { defaultHomeContent, type HomeContent } from "@/lib/home-content";
+import { type HomeContent } from "@/lib/home-content";
 import { fillTree } from "@/lib/office";
+import savedHome from "@/data/home.json";
+
+const publishedHome = savedHome as HomeContent;
+const publishedSlides = publishedHome.heroSlides?.length ? publishedHome.heroSlides : [publishedHome.heroImage];
 
 export function HomePageView() {
   const pages = usePages();
-  const [copy, setCopy] = useState<HomeContent>(defaultHomeContent);
-  const [slides, setSlides] = useState<string[]>([defaultHomeContent.heroImage]);
+  const [copy, setCopy] = useState<HomeContent>(publishedHome);
+  const [slides, setSlides] = useState<string[]>(publishedSlides);
   const view = useMemo(() => fillTree(copy, pages.office) as HomeContent, [copy, pages.office]);
 
   useEffect(() => {

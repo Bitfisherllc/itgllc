@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { pageCopy, type PageCopy } from "@/lib/page-copy";
+import { type PageCopy } from "@/lib/page-copy";
+import { mergePages } from "@/lib/page-copy.cjs";
 import { presentPages } from "@/lib/office";
+import savedPages from "@/data/pages.json";
 
-let current: PageCopy = presentPages(pageCopy);
+let current: PageCopy = presentPages(mergePages(savedPages) as PageCopy);
 const listeners = new Set<() => void>();
 let inflight: Promise<void> | null = null;
 
