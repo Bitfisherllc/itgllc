@@ -196,4 +196,19 @@ async function clearPageImage(removedPath) {
   return changed.length > 0;
 }
 
-module.exports = { readPages, writePage, setPageImage, clearPageImage };
+async function publishFile() {
+  if (!mysqlConfig()) return;
+  const file = readFile();
+  if (!file || typeof file !== "object") return;
+  const db = await getPool();
+  for (const [id, body] of Object.entries(file)) {
+    if (!body || typeof body !== "object") continue;
+    await db.query(
+      `INSERT INTO page_content (id, body) VALUES (?, ?)
+       ON DUPLICATE KEY UPDATE body = VALUES(body)`,
+      [id, JSON.stringify(body)],
+    );
+  }
+}
+
+module.exports = { readPages, writePage, setPageImage, clearPageImage, publishFile };

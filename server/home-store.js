@@ -83,4 +83,16 @@ async function writeHome(input) {
   return content;
 }
 
-module.exports = { readHome, writeHome };
+async function publishFile() {
+  if (!mysqlConfig()) return;
+  const file = readFile();
+  if (!file) return;
+  const db = await getPool();
+  await db.query(
+    `INSERT INTO home_content (id, body) VALUES (1, ?)
+     ON DUPLICATE KEY UPDATE body = VALUES(body)`,
+    [JSON.stringify(mergeHome(file))],
+  );
+}
+
+module.exports = { readHome, writeHome, publishFile };

@@ -3,6 +3,8 @@ const http = require("node:http");
 const path = require("node:path");
 const { handleApi } = require("./server/api");
 const { loadEnvFile } = require("./server/env");
+const home = require("./server/home-store");
+const pages = require("./server/pages-store");
 
 loadEnvFile();
 
@@ -105,6 +107,14 @@ const server = http.createServer((req, res) => {
   res.end("Not found");
 });
 
-server.listen(port, "0.0.0.0", () => {
-  console.log(`Listening on 0.0.0.0:${port}`);
-});
+home
+  .publishFile()
+  .then(() => pages.publishFile())
+  .catch((error) => {
+    console.error(error && error.message ? error.message : error);
+  })
+  .finally(() => {
+    server.listen(port, "0.0.0.0", () => {
+      console.log(`Listening on 0.0.0.0:${port}`);
+    });
+  });
