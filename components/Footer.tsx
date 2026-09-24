@@ -126,19 +126,21 @@ export function Footer() {
             >
               <img src="/logo/bitfisher.svg" alt="Bitfisher" className="h-7 w-auto" />
             </a>
-            <p>© {new Date().getFullYear()} ITG, LLC. All rights reserved.</p>
+            <div>
+              <p>© {new Date().getFullYear()} ITG, LLC. All rights reserved.</p>
+              <p className="mt-1 flex gap-4">
+                <Link href="/admin" className="hover:text-paper">
+                  Admin
+                </Link>
+                <Link href="/privacy" className="hover:text-paper">
+                  Privacy
+                </Link>
+                <Link href="/terms" className="hover:text-paper">
+                  Terms
+                </Link>
+              </p>
+            </div>
           </div>
-          <p className="flex gap-5">
-            <Link href="/privacy" className="hover:text-paper">
-              Privacy
-            </Link>
-            <Link href="/terms" className="hover:text-paper">
-              Terms
-            </Link>
-            <Link href="/admin" className="hover:text-paper">
-              Admin
-            </Link>
-          </p>
         </div>
       </div>
     </footer>
