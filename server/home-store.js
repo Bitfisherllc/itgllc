@@ -69,12 +69,31 @@ async function publishChosenPhotos() {
   return seeded;
 }
 
+const shippedResponsiveImage = "/images/library/d9b6d7c6133beb55.jpg";
+const previousResponsiveImage = "/images/library/f3dfa05ded2c8df0.webp";
+
+function withShippedResponsiveImage(content) {
+  if (!content || !Array.isArray(content.pillars)) return { content, changed: false };
+  let changed = false;
+  const pillars = content.pillars.map((pillar) => {
+    if (!pillar || pillar.title !== "Responsive") return pillar;
+    const current = String(pillar.image || "").split("?")[0];
+    if (current !== previousResponsiveImage) return pillar;
+    changed = true;
+    return { ...pillar, image: `${shippedResponsiveImage}?v=${Date.now()}` };
+  });
+  return { content: changed ? { ...content, pillars } : content, changed };
+}
+
 async function readHome() {
   if (documents.enabled()) {
     const stored = await documents.readJson("home");
     const hero = String(stored && stored.heroImage ? stored.heroImage : "").split("?")[0];
     if (stored == null || hero === "/images/home/hero.jpg") return publishChosenPhotos();
-    return mergeHome(stored);
+    const merged = mergeHome(stored);
+    const shipped = withShippedResponsiveImage(merged);
+    if (shipped.changed) await documents.writeJson("home", shipped.content);
+    return shipped.content;
   }
   if (mysqlConfig()) {
     const db = await getPool();
