@@ -24,7 +24,7 @@ export function OrganizationJsonLd() {
     telephone: office.phone,
     faxNumber: office.fax,
     email: office.emailGeneral,
-    image: `${site.url}/images/baltimore-harbor.jpg`,
+    image: `${site.url}/images/library/d9b6d7c6133beb55.jpg`,
     address: {
       "@type": "PostalAddress",
       streetAddress: office.street,
