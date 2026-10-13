@@ -87,7 +87,6 @@ const labels: Record<string, string> = {
   emailProcessing: "Processing email",
   emailEvents: "Events email",
   name: "Name",
-  role: "Title",
   excerpt: "Excerpt",
   people: "People",
 };
