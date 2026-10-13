@@ -11,7 +11,7 @@ const listeners = new Set<() => void>();
 let inflight: Promise<void> | null = null;
 
 function publish(next: PageCopy) {
-  current = presentPages(next);
+  current = presentPages(mergePages(next) as PageCopy);
   listeners.forEach((listener) => listener());
 }
 

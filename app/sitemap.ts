@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
-import { articles } from "@/lib/articles";
+import { locationPages } from "@/lib/locations";
+import { isLivePost, perspectivePosts } from "@/lib/perspective";
 import { resources } from "@/lib/resources";
 import { services } from "@/lib/services";
 import { site } from "@/lib/site";
@@ -10,18 +11,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const paths = [
     "",
     "/about",
+    "/about/dan-heart",
     "/team",
     "/services",
     "/resources",
-    "/articles",
+    "/resources/the-closing-perspective",
     "/coverage",
     "/contact",
     "/order",
     "/privacy",
     "/terms",
     ...services.map((service) => `/services/${service.slug}`),
+    ...locationPages().map((location) => `/coverage/${location.slug}`),
     ...resources.map((resource) => `/resources/${resource.slug}`),
-    ...articles.map((article) => `/articles/${article.slug}`),
+    ...perspectivePosts.filter((post) => isLivePost(post)).map((post) => `/resources/the-closing-perspective/${post.slug}`),
   ];
 
   return paths.map((path) => ({

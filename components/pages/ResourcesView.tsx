@@ -8,7 +8,7 @@ import { usePages } from "@/components/usePages";
 import { iconFor, pageIcons, resourceIcons } from "@/lib/icons";
 
 export function ResourcesView() {
-  const { resources, articles } = usePages();
+  const { resources, perspective } = usePages();
 
   return (
     <>
@@ -25,7 +25,23 @@ export function ResourcesView() {
             { name: "Resources", path: "/resources" },
           ]}
         />
-        <div className="grid gap-px bg-line sm:grid-cols-2">
+        <section className="border-y border-line">
+          <div className="flex flex-col gap-6 py-10 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-2xl">
+              <p className="eyebrow text-brass">{perspective.eyebrow}</p>
+              <h2 className="mt-3 font-serif text-4xl">
+                <Link href="/resources/the-closing-perspective" className="hover:text-brass-deep">
+                  {perspective.title}
+                </Link>
+              </h2>
+              <p className="mt-4 leading-relaxed text-ink-soft">{perspective.lede}</p>
+            </div>
+            <Link href="/resources/the-closing-perspective" className="text-sm font-semibold tracking-wide hover:text-brass-deep">
+              {perspective.items.length ? `${perspective.items.length} notes` : "Visit the journal"}
+            </Link>
+          </div>
+        </section>
+        <div className="mt-16 grid gap-px bg-line sm:grid-cols-2">
           {[...resources.items.filter((resource) => resource.slug === "search"), ...resources.items.filter((resource) => resource.slug !== "search")].map((resource) => (
             <Link
               key={resource.slug}
@@ -39,19 +55,6 @@ export function ResourcesView() {
               <p className="mt-3 leading-relaxed text-ink-soft">{resource.summary}</p>
             </Link>
           ))}
-        </div>
-        <div className="mt-16">
-          <h2 className="font-serif text-3xl">{resources.articlesHeading}</h2>
-          <p className="mt-3 max-w-2xl leading-relaxed text-ink-soft">{resources.articlesLede}</p>
-          <ul className="mt-8 divide-y divide-line border-y border-line">
-            {articles.items.map((article) => (
-              <li key={article.slug}>
-                <Link href={`/articles/${article.slug}`} className="block py-5 font-serif text-2xl hover:text-brass-deep">
-                  {article.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </>

@@ -10,7 +10,7 @@ export function OfficeMap() {
   const directions = googleDirectionsUrl(office);
 
   return (
-    <section className="mt-20">
+    <section className="mt-20 border-t border-line pt-16">
       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
         <Reveal>
           <p className="title-kicker eyebrow text-brass">

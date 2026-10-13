@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { LogoAnimationPreview } from "@/components/FooterLogo";
 import { OfficeAddressField } from "@/components/OfficeAddressField";
+import { PerspectiveEditor } from "@/components/PerspectiveEditor";
 import { refreshPages } from "@/components/usePages";
 import { pageCopy, pageLabels, type PageCopy } from "@/lib/page-copy";
+import { mergePages } from "@/lib/page-copy.cjs";
 
 const fieldClass =
   "mt-2 w-full border border-line bg-white px-3 py-3 text-base text-ink outline-none focus-visible:border-brass";
@@ -12,7 +14,7 @@ const fieldClass =
 const saveButtonClass =
   "inline-flex min-h-12 w-fit items-center justify-center bg-ink px-6 text-sm font-semibold text-paper disabled:opacity-60";
 
-const hidden = new Set(["slug", "image", "disclaimer", "entries", "lat", "lon", "placeId", "footer"]);
+const hidden = new Set(["slug", "image", "heroImage", "portrait", "disclaimer", "entries", "lat", "lon", "placeId", "footer"]);
 
 const labels: Record<string, string> = {
   eyebrow: "Eyebrow",
@@ -23,8 +25,29 @@ const labels: Record<string, string> = {
   teamsHeading: "Teams heading",
   teams: "Teams",
   buttonLabel: "Button",
+  family: "Meet the Owner",
+  navLabel: "Menu label",
+  heroTitle: "Page headline",
+  heroLede: "Subheading",
+  supporting: "Supporting message",
+  heroImageAlt: "Hero photograph description",
+  storyHeading: "Story heading",
+  story: "Dan's story",
+  messageHeading: "Message heading",
+  summary: "Opening line",
+  signature: "Signature",
+  role: "Role",
+  portraitAlt: "Portrait description",
+  introHeading: "About page heading",
+  introQuote: "About page quote",
+  introButton: "About page button",
+  ctaHeading: "Closing heading",
+  ctaText: "Closing text",
+  ctaButton: "Closing button",
+  journalHeading: "Journal heading",
+  journalText: "Journal note",
+  journalLink: "Journal link",
   items: "Entries",
-  summary: "Summary",
   sections: "Sections",
   heading: "Heading",
   faqs: "Questions",
@@ -352,7 +375,7 @@ export function PagesEditor({
     fetch("/api/pages")
       .then((response) => response.json())
       .then((body: { pages?: PageCopy }) => {
-        if (!cancelled && body.pages) setPages(body.pages);
+        if (!cancelled && body.pages) setPages(mergePages(body.pages) as PageCopy);
       })
       .catch(() => {
         if (!cancelled) setError("Page text could not be loaded.");
@@ -625,7 +648,17 @@ export function PagesEditor({
         )}
       </div>
 
-      {focusedItem ? (
+      {id === "perspective" && "items" in content ? (
+        <PerspectiveEditor
+          page={content as PageCopy["perspective"]}
+          slug={slug}
+          library={library}
+          onChange={(next) => {
+            setPages((current) => ({ ...current, perspective: next }));
+            setStatus("");
+          }}
+        />
+      ) : focusedItem ? (
         <section className="border border-line bg-white p-6">
           <h2 className="font-serif text-3xl">{label}</h2>
           <div className="mt-6 grid gap-5">

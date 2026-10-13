@@ -41,6 +41,32 @@ export type ArticleCopy = {
   sections: ArticleSectionCopy[];
 };
 
+export type PerspectiveSection = {
+  heading: string;
+  paragraphs: string[];
+  items?: string[];
+  note?: string;
+};
+
+export type PerspectivePost = {
+  slug: string;
+  title: string;
+  summary: string;
+  category: string;
+  published: boolean;
+  featured: boolean;
+  date: string;
+  updated: string;
+  author: string;
+  image: string;
+  imageAlt: string;
+  answer: string;
+  sections: PerspectiveSection[];
+  faqs: { question: string; answer: string }[];
+  seoTitle: string;
+  seoDescription: string;
+};
+
 export type PageCopy = {
   about: {
     eyebrow: string;
@@ -52,6 +78,32 @@ export type PageCopy = {
     teamsHeading: string;
     teams: { title: string; text: string }[];
     buttonLabel: string;
+    family: {
+      navLabel: string;
+      heroTitle: string;
+      heroLede: string;
+      supporting: string;
+      heroImage: string;
+      heroImageAlt: string;
+      storyHeading: string;
+      story: string[];
+      messageHeading: string;
+      summary: string;
+      paragraphs: string[];
+      signature: string;
+      role: string;
+      portrait: string;
+      portraitAlt: string;
+      introHeading: string;
+      introQuote: string;
+      introButton: string;
+      ctaHeading: string;
+      ctaText: string;
+      ctaButton: string;
+      journalHeading: string;
+      journalText: string;
+      journalLink: string;
+    };
   };
   team: {
     eyebrow: string;
@@ -93,6 +145,12 @@ export type PageCopy = {
     articlesLede: string;
     items: ResourceCopy[];
     faqs: { question: string; answer: string }[];
+  };
+  perspective: {
+    eyebrow: string;
+    title: string;
+    lede: string;
+    items: PerspectivePost[];
   };
   articles: {
     eyebrow: string;
@@ -149,6 +207,7 @@ export type PageCopy = {
 };
 
 export const pageCopy = raw as PageCopy;
+export const familyPath = "/about/dan-heart";
 export const pageIds = rawIds as (keyof PageCopy)[];
 
 export const pageLabels: Record<keyof PageCopy, string> = {
@@ -158,6 +217,7 @@ export const pageLabels: Record<keyof PageCopy, string> = {
   coverage: "Service Locations",
   contact: "Contact",
   resources: "Resources",
+  perspective: "The Closing Perspective",
   articles: "Articles",
   order: "Start an order",
   privacy: "Privacy",

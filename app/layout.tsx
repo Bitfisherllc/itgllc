@@ -2,6 +2,8 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import type { Metadata } from "next";
 import { Source_Sans_3 } from "next/font/google";
 import { Footer } from "@/components/Footer";
+import { SiteGate } from "@/components/SiteGate";
+import { siteIsOpen } from "@/app/unlock-site";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 
 config.autoAddCss = false;
@@ -37,7 +39,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const open = await siteIsOpen();
   return (
     <html
       lang="en"
@@ -45,20 +48,25 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${sans.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <QualiaQuote token={site.qualiaQuoteToken} />
+        {open ? null : <SiteGate />}
+        {open ? <QualiaQuote token={site.qualiaQuoteToken} /> : null}
         <AdminNavProvider>
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:bg-paper focus:px-4 focus:py-3"
-        >
-          Skip to content
-        </a>
-        <OrganizationJsonLd />
-        <Header />
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        {open ? (
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:bg-paper focus:px-4 focus:py-3"
+          >
+            Skip to content
+          </a>
+        ) : null}
+        {open ? <OrganizationJsonLd /> : null}
+        {open ? <Header /> : null}
+        {open ? (
+          <main id="main" className="flex-1">
+            {children}
+          </main>
+        ) : null}
+        {open ? <Footer /> : null}
         </AdminNavProvider>
       </body>
     </html>

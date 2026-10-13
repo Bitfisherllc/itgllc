@@ -11,7 +11,7 @@ import { QuoteLink } from "@/components/QuoteLink";
 import { menuItemActive, menuSectionActive, previewPath, targetFor, useAdminNav } from "@/components/AdminNav";
 import { usePages } from "@/components/usePages";
 import { faFileLines, faHouseHeart, iconFor, pageIcons, resourceIcons, serviceIcons } from "@/lib/icons";
-import { type PageCopy } from "@/lib/page-copy";
+import { familyPath, type PageCopy } from "@/lib/page-copy";
 import { nav, site } from "@/lib/site";
 
 const navIcons: Record<string, IconDefinition> = {
@@ -31,15 +31,16 @@ function childrenFor(pages: PageCopy): Record<string, { href: string; label: str
     "/about": [
       { href: "/about", label: "The office", icon: pageIcons.about },
       { href: "/team", label: "Our team", icon: pageIcons.team },
+      { href: familyPath, label: pages.about.family.navLabel, icon: pageIcons.family },
       { href: "/coverage", label: "Service Locations", icon: pageIcons.coverage },
     ],
     "/resources": [
+      { href: "/resources/the-closing-perspective", label: pages.perspective.title, icon: pageIcons.perspective },
       ...[...pages.resources.items.filter((resource) => resource.slug === "search"), ...pages.resources.items.filter((resource) => resource.slug !== "search")].map((resource) => ({
         href: `/resources/${resource.slug}`,
         label: resource.title,
         icon: iconFor(resourceIcons, resource.slug),
       })),
-      { href: "/articles", label: "Articles", icon: pageIcons.articles },
     ],
   };
 }
@@ -58,12 +59,14 @@ export function Header() {
   const [menuPath, setMenuPath] = useState(pathname);
   const [scrolled, setScrolled] = useState(false);
   const [mobileSection, setMobileSection] = useState<string | null>(null);
+  const [desktopMenu, setDesktopMenu] = useState<string | null>(null);
 
   function choosePage(event: React.MouseEvent, href: string, label: string) {
     if (!admin) return;
     event.preventDefault();
     setTarget(targetFor(href, label));
     setOpen(false);
+    setDesktopMenu(null);
     window.scrollTo({ top: 0 });
   }
 
@@ -74,6 +77,7 @@ export function Header() {
     else setTarget({ kind: "page", id: "other", label: "Footer" });
     setOpen(false);
     setMobileSection(null);
+    setDesktopMenu(null);
     window.scrollTo({ top: 0 });
   }
 
@@ -97,6 +101,7 @@ export function Header() {
     setMenuPath(pathname);
     setOpen(false);
     setMobileSection(null);
+    setDesktopMenu(null);
   }
 
   useEffect(() => {
@@ -117,6 +122,7 @@ export function Header() {
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
       setOpen(false);
+      setDesktopMenu(null);
       const current = document.activeElement;
       if (current instanceof HTMLElement && current.closest("header")) current.blur();
     };
@@ -174,12 +180,24 @@ export function Header() {
               );
             }
 
+            const menuOpen = desktopMenu === item.href;
             return (
-              <div key={item.href} className="group relative">
+              <div
+                key={item.href}
+                className="relative"
+                onMouseEnter={() => setDesktopMenu(item.href)}
+                onMouseLeave={() => setDesktopMenu(null)}
+                onFocus={() => setDesktopMenu(item.href)}
+                onBlur={(event) => {
+                  const next = event.relatedTarget;
+                  if (!(next instanceof Node) || !event.currentTarget.contains(next)) setDesktopMenu(null);
+                }}
+              >
                 <Link
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   aria-haspopup="true"
+                  aria-expanded={menuOpen}
                   onClick={(event) => choosePage(event, item.href, item.label)}
                   className={`inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold ${
                     active ? (admin ? "text-brass" : "text-brass-deep") : admin ? "hover:text-brass" : "hover:text-brass-deep"
@@ -189,7 +207,11 @@ export function Header() {
                   {item.label}
                   <Chevron />
                 </Link>
-                <div className="invisible absolute left-0 top-full z-50 pt-2 opacity-0 transition duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                <div
+                  className={`absolute left-0 top-full z-50 pt-2 transition duration-150 ${
+                    menuOpen ? "visible opacity-100" : "pointer-events-none invisible opacity-0"
+                  }`}
+                >
                   <div
                     className={`border border-line bg-white p-3 text-ink shadow-[0_18px_50px_rgba(0,0,0,0.14)] ${
                       children.length > 4 ? "grid w-[34rem] grid-cols-2 gap-1" : "grid w-64 gap-1"
@@ -218,11 +240,21 @@ export function Header() {
             );
           })}
           {admin ? (
-            <div className="group relative">
+            <div
+              className="relative"
+              onMouseEnter={() => setDesktopMenu("other")}
+              onMouseLeave={() => setDesktopMenu(null)}
+              onFocus={() => setDesktopMenu("other")}
+              onBlur={(event) => {
+                const next = event.relatedTarget;
+                if (!(next instanceof Node) || !event.currentTarget.contains(next)) setDesktopMenu(null);
+              }}
+            >
               <button
                 type="button"
                 aria-current={otherActive ? "page" : undefined}
                 aria-haspopup="true"
+                aria-expanded={desktopMenu === "other"}
                 onClick={() => chooseOther("footer")}
                 className={`inline-flex items-center gap-2 px-3 py-2 text-sm font-semibold ${
                   otherActive ? "text-brass" : "hover:text-brass"
@@ -232,7 +264,11 @@ export function Header() {
                 Other
                 <Chevron />
               </button>
-              <div className="invisible absolute left-0 top-full z-50 pt-2 opacity-0 transition duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+              <div
+                className={`absolute left-0 top-full z-50 pt-2 transition duration-150 ${
+                  desktopMenu === "other" ? "visible opacity-100" : "pointer-events-none invisible opacity-0"
+                }`}
+              >
                 <div className="grid w-56 gap-1 border border-line bg-white p-3 text-ink shadow-[0_18px_50px_rgba(0,0,0,0.14)]">
                   {otherItems.map((item) => (
                     <button

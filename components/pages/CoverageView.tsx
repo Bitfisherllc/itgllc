@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button } from "@/components/Button";
 import { Icon } from "@/components/Icon";
 import { PageHero } from "@/components/PageHero";
 import { usePages } from "@/components/usePages";
 import { faLocationDot, pageIcons } from "@/lib/icons";
+import { locationSlug } from "@/lib/locations";
 
 export function CoverageView() {
   const { coverage } = usePages();
@@ -45,9 +47,14 @@ export function CoverageView() {
             <h2 className="font-serif text-3xl">{coverage.statesHeading}</h2>
             <ul className="mt-6 grid grid-cols-2 gap-3">
               {coverage.states.map((state) => (
-                <li key={state} className="flex items-center gap-2 border-b border-line py-3">
-                  <Icon icon={faLocationDot} className="text-xs text-brass" />
-                  {state}
+                <li key={state} className="border-b border-line">
+                  <Link
+                    href={`/coverage/${locationSlug(state)}`}
+                    className="flex items-center gap-2 py-3 hover:text-brass-deep"
+                  >
+                    <Icon icon={faLocationDot} className="text-xs text-brass" />
+                    {state}
+                  </Link>
                 </li>
               ))}
             </ul>

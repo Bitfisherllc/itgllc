@@ -66,10 +66,15 @@ function passwordMatches(password) {
   return safeEqual(password, expected);
 }
 
+function tokenIsValid(token) {
+  return sessionIsValid(token || "");
+}
+
 module.exports = {
   configured,
   createSession,
   isSignedIn,
+  tokenIsValid,
   cookieHeader,
   passwordMatches,
 };

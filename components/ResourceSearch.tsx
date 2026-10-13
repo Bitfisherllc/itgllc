@@ -19,16 +19,33 @@ type Hit = {
   text: string;
 };
 
-const groups = ["Guides", "Questions", "Glossary", "Articles"];
+const groups = ["Notes", "Guides", "Questions", "Glossary"];
 
 export function ResourceSearch() {
-  const { resources, articles } = usePages();
+  const { resources, perspective } = usePages();
   const [query, setQuery] = useState("");
   const needle = query.trim().toLowerCase();
 
   const hits = useMemo(() => {
     if (!needle) return [] as Hit[];
     const found: Hit[] = [];
+
+    for (const post of perspective.items) {
+      if (!post.published || !post.slug || !post.title) continue;
+      const note = [
+        post.title,
+        post.summary,
+        post.answer,
+        ...post.sections.flatMap((section) => [section.heading, ...section.paragraphs, ...(section.items ?? [])]),
+      ].join(" ");
+      if (!note.toLowerCase().includes(needle)) continue;
+      found.push({
+        kind: "Notes",
+        href: `/resources/the-closing-perspective/${post.slug}`,
+        title: post.title,
+        text: post.summary,
+      });
+    }
 
     for (const item of resources.items) {
       if (item.slug === "search") continue;
@@ -64,23 +81,8 @@ export function ResourceSearch() {
       });
     }
 
-    for (const article of articles.items) {
-      const copy = [
-        article.title,
-        article.summary,
-        ...article.sections.flatMap((section) => [section.heading, ...section.paragraphs, ...(section.items ?? [])]),
-      ].join(" ");
-      if (!copy.toLowerCase().includes(needle)) continue;
-      found.push({
-        kind: "Articles",
-        href: `/articles/${article.slug}`,
-        title: article.title,
-        text: article.summary,
-      });
-    }
-
     return found;
-  }, [articles.items, needle, resources.faqs, resources.items]);
+  }, [needle, perspective.items, resources.faqs, resources.items]);
 
   return (
     <div>
@@ -95,7 +97,7 @@ export function ResourceSearch() {
         className="mt-2 w-full border border-line bg-white px-3 py-3 text-base text-ink outline-none focus-visible:border-brass"
       />
       <p className="mt-3 text-sm text-muted" aria-live="polite">
-        {needle ? `${hits.length} ${hits.length === 1 ? "result" : "results"}` : "Guides, questions, glossary terms, and articles."}
+        {needle ? `${hits.length} ${hits.length === 1 ? "result" : "results"}` : "Journal notes, questions, and glossary terms."}
       </p>
       {needle && hits.length === 0 ? (
         <p className="mt-10 leading-relaxed text-ink-soft">No pages match that search.</p>

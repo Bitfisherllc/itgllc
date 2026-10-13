@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import type { PageCopy } from "@/lib/page-copy";
+import { familyPath, type PageCopy } from "@/lib/page-copy";
 
 export type AdminTarget =
   | { kind: "home"; label: string }
@@ -73,13 +73,16 @@ export function previewPath(target: AdminTarget) {
   if (target.kind === "home" || (target.kind === "page" && target.id === "other")) return "/";
   if (target.kind === "page" && target.id === "office") return "/contact";
   if (target.kind !== "page") return null;
-  if (target.id === "about") return "/about";
+  if (target.id === "about") return target.slug === "family" ? familyPath : "/about";
   if (target.id === "team") return "/team";
   if (target.id === "services") return target.slug ? `/services/${target.slug}` : "/services";
   if (target.id === "coverage") return "/coverage";
   if (target.id === "contact") return "/contact";
   if (target.id === "resources") return target.slug ? `/resources/${target.slug}` : "/resources";
-  if (target.id === "articles") return "/articles";
+  if (target.id === "perspective") {
+    return target.slug ? `/resources/the-closing-perspective/${target.slug}` : "/resources/the-closing-perspective";
+  }
+  if (target.id === "articles") return "/resources/the-closing-perspective";
   if (target.id === "order") return "/order";
   if (target.id === "privacy") return "/privacy";
   if (target.id === "terms") return "/terms";
@@ -92,9 +95,13 @@ export function targetFor(href: string, label: string): AdminTarget {
   const service = href.match(/^\/services\/([^/]+)$/);
   if (service) return { kind: "page", id: "services", slug: service[1], label };
   if (href === "/about") return { kind: "page", id: "about", label };
+  if (href === familyPath) return { kind: "page", id: "about", slug: "family", label };
   if (href === "/team") return { kind: "page", id: "team", label };
   if (href === "/coverage") return { kind: "page", id: "coverage", label };
   if (href === "/resources") return { kind: "page", id: "resources", label };
+  if (href === "/resources/the-closing-perspective") return { kind: "page", id: "perspective", label };
+  const post = href.match(/^\/resources\/the-closing-perspective\/([^/]+)$/);
+  if (post) return { kind: "page", id: "perspective", slug: post[1], label };
   const resource = href.match(/^\/resources\/([^/]+)$/);
   if (resource) return { kind: "page", id: "resources", slug: resource[1], label };
   if (href === "/articles") return { kind: "page", id: "articles", label };
@@ -106,10 +113,15 @@ export function menuItemActive(href: string, target: AdminTarget) {
   if (target.kind !== "page") return false;
   if (href === "/services") return target.id === "services" && !target.slug;
   if (href.startsWith("/services/")) return target.id === "services" && href === `/services/${target.slug}`;
-  if (href === "/about") return target.id === "about";
+  if (href === "/about") return target.id === "about" && target.slug !== "family";
+  if (href === familyPath) return target.id === "about" && target.slug === "family";
   if (href === "/team") return target.id === "team";
   if (href === "/coverage") return target.id === "coverage";
   if (href === "/resources") return target.id === "resources" && !target.slug;
+  if (href === "/resources/the-closing-perspective") return target.id === "perspective";
+  if (href.startsWith("/resources/the-closing-perspective/")) {
+    return target.id === "perspective" && href === `/resources/the-closing-perspective/${target.slug}`;
+  }
   if (href.startsWith("/resources/")) return target.id === "resources" && href === `/resources/${target.slug}`;
   if (href === "/articles") return target.id === "articles";
   if (href === "/contact") return target.id === "contact";
@@ -120,7 +132,7 @@ export function menuSectionActive(href: string, target: AdminTarget) {
   if (target.kind !== "page") return false;
   if (href === "/services") return target.id === "services";
   if (href === "/about") return target.id === "about" || target.id === "team" || target.id === "coverage";
-  if (href === "/resources") return target.id === "resources" || target.id === "articles";
+  if (href === "/resources") return target.id === "resources" || target.id === "articles" || target.id === "perspective";
   if (href === "/contact") return target.id === "contact";
   return false;
 }

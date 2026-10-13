@@ -91,11 +91,13 @@ export const faHouseHeart: IconDefinition = {
 
 export const pageIcons = {
   about: faBuilding,
+  family: faHouseUser,
   team: faUsers,
   services: faScaleBalanced,
   contact: faPhone,
   coverage: faMapLocationDot,
   resources: faBookOpen,
+  perspective: faPenNib,
   articles: faNewspaper,
   order: faFolderPlus,
   other: faEllipsis,

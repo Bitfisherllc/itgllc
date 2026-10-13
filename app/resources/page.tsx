@@ -4,7 +4,7 @@ import { ResourcesView } from "@/components/pages/ResourcesView";
 export const metadata: Metadata = {
   title: "Resources",
   description:
-    "Guides from Integrity Title Group on orders, closing, title insurance in general terms, and what buyers, sellers, agents, and lenders should send.",
+    "The Closing Perspective, office questions, a glossary, and search. Explanations of closing and title insurance live in the journal.",
   alternates: { canonical: "/resources" },
 };
 

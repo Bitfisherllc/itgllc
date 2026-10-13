@@ -48,6 +48,11 @@ export function Footer() {
           </address>
           <h2 className="eyebrow mt-8 text-brass">Resources</h2>
           <ul className="mt-4 space-y-2 text-sm">
+            <li>
+              <Link href="/resources/the-closing-perspective" className="text-paper/80 hover:text-paper">
+                The Closing Perspective
+              </Link>
+            </li>
             {resources.items.slice(0, 4).map((resource) => (
               <li key={resource.slug}>
                 <Link href={`/resources/${resource.slug}`} className="text-paper/80 hover:text-paper">
@@ -68,7 +73,6 @@ export function Footer() {
               ["Services", "/services"],
               ["Service Locations", "/coverage"],
               ["Resources", "/resources"],
-              ["Articles", "/articles"],
               ["Contact", "/contact"],
             ].map(([label, href]) => (
               <li key={href}>

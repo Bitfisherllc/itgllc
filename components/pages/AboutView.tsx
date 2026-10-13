@@ -8,6 +8,8 @@ import { OfficeMap } from "@/components/OfficeMap";
 import { PageHero } from "@/components/PageHero";
 import { usePages } from "@/components/usePages";
 import { pageIcons, teamIcons } from "@/lib/icons";
+import { familyPath } from "@/lib/page-copy";
+import { FamilyPhoto } from "@/components/pages/FamilyView";
 
 export function AboutView() {
   const { about } = usePages();
@@ -38,12 +40,15 @@ export function AboutView() {
                 {paragraph}
               </p>
             ))}
+            <div className="mt-8">
+              <Button href="/team">Meet the team</Button>
+            </div>
           </div>
         </div>
 
         <OfficeMap />
 
-        <div className="mt-20">
+        <div className="mt-20 border-t border-line pt-16">
           <h2 className="display text-4xl md:text-5xl">{about.teamsHeading}</h2>
           <div className="mt-10 grid gap-8 md:grid-cols-3">
             {about.teams.map((team, index) => (
@@ -58,12 +63,23 @@ export function AboutView() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-wrap gap-3">
-          <Button href="/team" variant="ghost">
-            Our team
-          </Button>
-          <Button href="/contact">{about.buttonLabel}</Button>
-        </div>
+        <section className="mt-20 border-t border-line pt-16" aria-labelledby="owner-heading">
+          <div className="grid items-start gap-10 md:grid-cols-[16rem_1fr] md:gap-12">
+            <div className="max-w-xs">
+              <FamilyPhoto src={about.family.portrait} alt={about.family.portraitAlt} />
+            </div>
+            <div className="max-w-xl">
+              <h2 id="owner-heading" className="display text-4xl md:text-5xl">
+                {about.family.introHeading}
+              </h2>
+              <p className="mt-5 text-lg leading-relaxed text-ink-soft">“{about.family.introQuote}”</p>
+              <div className="mt-8">
+                <Button href={familyPath}>{about.family.introButton}</Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </article>
     </>
   );

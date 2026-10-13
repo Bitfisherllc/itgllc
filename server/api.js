@@ -9,6 +9,7 @@ const media = require("./media");
 const store = require("./inquiry-store");
 const places = require("./google-places");
 const documents = require("./documents");
+const siteGate = require("./site-gate");
 
 const attempts = new Map();
 
@@ -190,6 +191,10 @@ async function handleApi(req, res) {
     }
 
     if (req.method === "GET" && pathname === "/api/home") {
+      if (!siteGate.requestAllowed(req)) {
+        sendJson(res, 401, { ok: false, error: "Sign in to view the site." });
+        return;
+      }
       const content = await home.readHome();
       const slides = (content.heroSlides || []).filter((src) => String(src).split("?")[0].endsWith(".mp4"));
       sendJson(res, 200, { ok: true, content, slides });
@@ -197,6 +202,10 @@ async function handleApi(req, res) {
     }
 
     if (req.method === "GET" && pathname === "/api/pages") {
+      if (!siteGate.requestAllowed(req)) {
+        sendJson(res, 401, { ok: false, error: "Sign in to view the site." });
+        return;
+      }
       sendJson(res, 200, { ok: true, pages: await pages.readPages() });
       return;
     }
